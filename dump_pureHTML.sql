@@ -1,12 +1,9 @@
 CREATE TABLE `user` (
 	`id` int unsigned NOT NULL AUTO_INCREMENT,
 	`name` varchar(45) NOT NULL,
-	`surname` varchar(45) NOT NULL,
 	`email` varchar(320) NOT NULL,
-	`username` varchar(45) NOT NULL,
 	`password` varchar(45) NOT NULL,
 	PRIMARY KEY (`id`),
-	CONSTRAINT `user_username_un` UNIQUE (`username`),
 	CONSTRAINT `user_email_un` UNIQUE (`email`)
 );
 
