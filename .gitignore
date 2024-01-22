@@ -45,3 +45,6 @@ pom.xml.versionsBackup
 pom.xml.next
 release.properties
 dependency-reduced-pom.xml
+
+# Allow jar libs in WEB-INF/lib folder
+!**/src/main/webapp/WEB-INF/lib/*.jar
