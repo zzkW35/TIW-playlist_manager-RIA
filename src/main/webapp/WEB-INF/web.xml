@@ -19,12 +19,7 @@
 		<param-name>dbDriver</param-name>
 		<param-value>com.mysql.cj.jdbc.Driver</param-value>
 	</context-param>
-	<servlet>
-		<servlet-name>TestServlet</servlet-name>
-		<servlet-class>it.polimi.tiw.playlistmanager.controllers.TestServlet</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>TestServlet</servlet-name>
-		<url-pattern>/</url-pattern>
-	</servlet-mapping>
+	<welcome-file-list>
+		<welcome-file>GoToLoginPage</welcome-file>
+	</welcome-file-list>
 </web-app>

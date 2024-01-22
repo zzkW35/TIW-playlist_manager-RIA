@@ -1,4 +1,4 @@
-package it.polimi.tiw.playlistmanager.db;
+package it.polimi.tiw.playlistmanager.handlers;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
