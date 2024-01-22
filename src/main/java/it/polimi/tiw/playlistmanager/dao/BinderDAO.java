@@ -14,6 +14,12 @@ private Connection connection;
         this.connection = connection;
     }
 
+    /**
+     * This method finds a binder by its id
+     * @param id the id of the binder to find
+     * @return the binder with the given id
+     * @throws SQLException if something goes wrong while searching for the binder
+     */
     public Binder findBinderById(int id) throws SQLException {
         String query = "SELECT * FROM binder WHERE id = ?";
         Binder binder = null;
@@ -56,6 +62,13 @@ private Connection connection;
         return binder;
     }
 
+    /**
+     * This method finds a binder by its playlistId and songId
+     * @param playlistId the playlistId of the binder to find
+     * @param songId the songId of the binder to find
+     * @return the binder with the given playlistId and songId
+     * @throws SQLException if something goes wrong while searching for the binder
+     */
     public Binder findBinderByPlaylistIdAndSongId(int playlistId, int songId) throws SQLException {
         String query = "SELECT * FROM binder WHERE playlist_id = ? AND song_id = ?";
         Binder binder = null;
@@ -99,8 +112,13 @@ private Connection connection;
         return binder;
     }
 
+    /**
+     * This method creates a new binder (playlist-song relation) if it doesn't already exist
+     * @param playlistId the playlistId of the binder
+     * @param songId the songId of the binder
+     * @throws SQLException if something goes wrong while creating the binder
+     */
     public void createBinder(int playlistId, int songId) throws SQLException {
-        // Create a new binder only if it doesn't already exist
         Binder binder = findBinderByPlaylistIdAndSongId(playlistId, songId);
         if (binder != null) {
             // TODO: maybe throw a custom exception?

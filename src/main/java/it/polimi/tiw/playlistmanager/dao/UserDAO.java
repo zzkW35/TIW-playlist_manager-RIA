@@ -14,6 +14,13 @@ public class UserDAO {
         this.connection = connection;
     }
 
+    /**
+     * This method finds a user by its email and password
+     * @param email the email of the user to find
+     * @param password the password of the user to find
+     * @return the user with the given email and password
+     * @throws SQLException if something goes wrong while searching for the user
+     */
     public User findUser(String email, String password) throws SQLException {
         String query = "SELECT * FROM user WHERE email = ? AND password = ?";
         User user = null;
@@ -58,6 +65,12 @@ public class UserDAO {
         return user;
     }
 
+    /**
+     * This method finds a user by its id
+     * @param id the id of the user to find
+     * @return the user with the given id
+     * @throws SQLException if something goes wrong while searching for the user
+     */
     public User findUserById(int id) throws SQLException {
         String query = "SELECT * FROM user WHERE id = ?";
         User user = null;
@@ -100,6 +113,4 @@ public class UserDAO {
         }
         return user;
     }
-
-
 }
