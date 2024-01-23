@@ -46,6 +46,9 @@ public class SongDAO {
                 song.setFilePath(resultSet.getString("file_path"));
                 song.setUploaderId(resultSet.getInt("uploader_id"));
             }
+            if (song == null) {
+                throw new SQLException("Song not found");
+            }
         } catch (SQLException e) {
             throw new SQLException("Something went wrong while searching for the song: " + e.getMessage());
         } finally {
@@ -144,6 +147,9 @@ public class SongDAO {
                 song.setFilePath(resultSet.getString("file_path"));
                 song.setUploaderId(resultSet.getInt("uploader_id"));
                 songs.add(song);
+            }
+            if (songs.isEmpty()) {
+                throw new SQLException("No songs found");
             }
         }
         catch (SQLException e) {

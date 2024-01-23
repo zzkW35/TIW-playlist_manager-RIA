@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="it">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+    <title>Home page</title>
+</head>
+<body>
+    <div class="home-title">Welcome back, <span th:text="${session.currentUser.name}">current user!</span></div>
+
+
+    <div class="playlists">
+        <h2>Your Playlists:</h2>
+        <ul th:each="playlist : ${session.orderedUserPlaylists}">
+            <li>
+                <h3 th:text="${playlist.title}"></h3>
+                <!-- Add more details here as needed -->
+            </li>
+        </ul>
+    </div>
+</body>
+</html>

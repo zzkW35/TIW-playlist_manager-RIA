@@ -40,6 +40,9 @@ public class PlaylistDAO {
                 playlist.setCreationDate(resultSet.getDate("creation_date"));
                 playlist.setOwnerId(resultSet.getInt("owner_id"));
             }
+            if (playlist == null) {
+                throw new SQLException("Playlist not found");
+            }
         }
         catch (SQLException e) {
             throw new SQLException("Something went wrong while searching for the playlist: " + e.getMessage());
@@ -120,6 +123,63 @@ public class PlaylistDAO {
                 playlist.setCreationDate(resultSet.getDate("creation_date"));
                 playlist.setOwnerId(resultSet.getInt("owner_id"));
                 playlists.add(playlist);
+            }
+            if (playlists.isEmpty()) {
+                throw new SQLException("No playlists found");
+            }
+        }
+        catch (SQLException e) {
+            throw new SQLException("Something went wrong while searching for the playlists: " + e.getMessage());
+        }
+        finally {
+            try {
+                if (resultSet != null) {
+                    resultSet.close();
+                }
+            }
+            catch (SQLException e) {
+                throw new SQLException("Something went wrong while closing resultSet: " + e.getMessage());
+            }
+            try {
+                if (preparedStatement != null) {
+                    preparedStatement.close();
+                }
+            }
+            catch (SQLException e) {
+                throw new SQLException("Something went wrong while closing preparedStatement: " + e.getMessage());
+            }
+        }
+        return playlists;
+    }
+
+    // Order playlists by creation_date, given the owner_id, from the most recent to the oldest
+    /**
+     * This method finds all the playlists owned by a user and orders them by creation date, from the most recent to the oldest
+     * @param userId the id of the user who owns the playlists
+     * @return a list of all the playlists owned by the user, ordered by creation date, from the most recent to the oldest
+     * @throws SQLException if something goes wrong while searching for the playlists
+     */
+    public List<Playlist> findPlaylistsByUserIdOrderByCreationDateDesc(int userId) throws SQLException {
+        String query = "SELECT * FROM playlist WHERE owner_id = ? ORDER BY creation_date DESC";
+        List<Playlist> playlists = new ArrayList<>();
+        ResultSet resultSet = null;
+        PreparedStatement preparedStatement = null;
+
+        try {
+            preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setInt(1, userId);
+            resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                Playlist playlist = new Playlist();
+                playlist.setId(resultSet.getInt("id"));
+                playlist.setTitle(resultSet.getString("title"));
+                playlist.setCreationDate(resultSet.getDate("creation_date"));
+                playlist.setOwnerId(resultSet.getInt("owner_id"));
+                playlists.add(playlist);
+            }
+            if (playlists.isEmpty()) {
+                throw new SQLException("No playlists found");
             }
         }
         catch (SQLException e) {

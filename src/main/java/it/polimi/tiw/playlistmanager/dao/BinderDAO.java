@@ -37,6 +37,9 @@ private Connection connection;
                 binder.setPlaylistId(resultSet.getInt("playlist_id"));
                 binder.setSongId(resultSet.getInt("song_id"));
             }
+            if (binder == null) {
+                throw new SQLException("Binder not found");
+            }
         }
         catch (SQLException e) {
             throw new SQLException("Something went wrong while searching for the binder: " + e.getMessage());
@@ -86,6 +89,9 @@ private Connection connection;
                 binder.setId(resultSet.getInt("id"));
                 binder.setPlaylistId(resultSet.getInt("playlist_id"));
                 binder.setSongId(resultSet.getInt("song_id"));
+            }
+            if (binder == null) {
+                throw new SQLException("Binder not found");
             }
         }
         catch (SQLException e) {

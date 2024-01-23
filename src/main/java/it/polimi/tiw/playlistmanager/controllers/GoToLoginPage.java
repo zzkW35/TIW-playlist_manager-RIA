@@ -12,8 +12,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
-import org.thymeleaf.templatemode.TemplateMode;
-import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
+import it.polimi.tiw.playlistmanager.handlers.ConnectionHandler;
+import static it.polimi.tiw.playlistmanager.handlers.ThymeleafHandler.handler;
 
 /**
  * Servlet implementation class Login
@@ -34,12 +34,9 @@ public class GoToLoginPage extends HttpServlet {
     }
 
 	public void init() throws ServletException {
+		connection = ConnectionHandler.getConnection(getServletContext());
 		ServletContext servletContext = getServletContext();
-		ServletContextTemplateResolver templateResolver = new ServletContextTemplateResolver(servletContext);
-		templateResolver.setTemplateMode(TemplateMode.HTML);
-		this.templateEngine = new TemplateEngine();
-		this.templateEngine.setTemplateResolver(templateResolver);
-		templateResolver.setSuffix(".html");
+		this.templateEngine = handler(servletContext);
 	}
 
 	/**
@@ -52,5 +49,4 @@ public class GoToLoginPage extends HttpServlet {
 		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
 		templateEngine.process(path, ctx, response.getWriter());
 	}
-
 }

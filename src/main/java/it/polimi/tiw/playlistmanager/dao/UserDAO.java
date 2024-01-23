@@ -40,6 +40,9 @@ public class UserDAO {
                 user.setEmail(resultSet.getString("email"));
                 user.setPassword(resultSet.getString("password"));
             }
+            if (user == null) {
+                throw new SQLException("User not found");
+            }
         }
         catch (SQLException e) {
             throw new SQLException("Something went wrong while searching for the user: " + e.getMessage());
@@ -88,6 +91,9 @@ public class UserDAO {
                 user.setName(resultSet.getString("name"));
                 user.setEmail(resultSet.getString("email"));
                 user.setPassword(resultSet.getString("password"));
+            }
+            if (user == null) {
+                throw new SQLException("User not found");
             }
         }
         catch (SQLException e) {
