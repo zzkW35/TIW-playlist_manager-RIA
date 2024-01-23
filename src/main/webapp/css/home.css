@@ -1,0 +1,16 @@
+.playlist-card {
+    border: 1px solid #ddd;
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.playlist-title {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.playlist-date {
+    font-size: 14px;
+    color: #888;
+}
