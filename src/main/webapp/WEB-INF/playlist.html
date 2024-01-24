@@ -9,9 +9,14 @@
     <div class="home-title">Welcome back, <span th:text="${session.currentUser.name}">current user!</span></div>
     <div class="playlist">
         <h2 th:text="${session.playlist.title}">Playlist Name</h2>
-        <ul>
-            <li th:each="song : ${session.songs}" th:text="${song.title}">Song Name</li>
-        </ul>
+        <table>
+            <tr>
+                <th th:each="song, stat : ${session.songs}" th:if="${stat.count <= 5}">
+                    <img th:src="${song.coverPath}" alt="Album Cover">
+                    <p th:text="${song.title}">Song Name</p>
+                </th>
+            </tr>
+        </table>
     </div>
 </body>
 </html>
