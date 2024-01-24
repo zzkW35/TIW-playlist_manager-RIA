@@ -14,7 +14,7 @@
         <div th:if="${#lists.isEmpty(session.orderedUserPlaylists)}" class="playlist-card">
             <div class="playlist-title">No playlists available</div>
         </div>
-        <a th:each="playlist : ${session.orderedUserPlaylists}" th:href="@{/GoToPlaylistPage}" class="playlist-card">
+        <a th:each="playlist : ${session.orderedUserPlaylists}" th:href="@{/GoToPlaylistPage(playlistId=${playlist.id})}" class="playlist-card">
             <div class="playlist-title" th:text="${playlist.title}"></div>
             <div class="playlist-date" th:text="${#dates.format(playlist.creationDate, 'dd/MM/yyyy')}"></div>
         </a>

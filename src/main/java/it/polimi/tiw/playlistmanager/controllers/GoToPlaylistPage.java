@@ -2,13 +2,19 @@ package it.polimi.tiw.playlistmanager.controllers;
 
 import java.io.IOException;
 import java.sql.Connection;
+import java.util.List;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
+import it.polimi.tiw.playlistmanager.beans.Playlist;
+import it.polimi.tiw.playlistmanager.beans.Song;
+import it.polimi.tiw.playlistmanager.dao.BinderDAO;
+import it.polimi.tiw.playlistmanager.dao.PlaylistDAO;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
@@ -42,8 +48,51 @@ public class GoToPlaylistPage extends HttpServlet {
      * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
      */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // Redirect to the Home page and add missions to the parameters
-        String path = "/WEB-INF/playlist.html";
+
+        // Get the playlistId from the request
+        String playlistIdString = request.getParameter("playlistId");
+        if (playlistIdString == null || playlistIdString.isEmpty()) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing playlistId");
+            return;
+        }
+
+        // Parse the playlistId
+        int playlistId;
+        try {
+            playlistId = Integer.parseInt(playlistIdString);
+        } catch (NumberFormatException e) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "PlaylistId is not an integer");
+            return;
+        }
+
+        // Get the playlist from the database
+        PlaylistDAO playlistDAO = new PlaylistDAO(connection);
+        Playlist playlist;
+        try {
+            playlist = playlistDAO.findPlaylistById(playlistId);
+        } catch (Exception e) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "PlaylistId is not valid");
+            return;
+        }
+
+        // Find all the songs in the playlist
+        BinderDAO binderDAO = new BinderDAO(connection);
+        List<Song> songs;
+        try {
+            songs = binderDAO.findAllSongsByPlaylistId(playlistId);
+        } catch (Exception e) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Something went wrong while retrieving the songs: " + e.getMessage());
+            return;
+        }
+
+        // Add the playlist and the songs to the parameters and redirect to the playlist page
+        HttpSession session = request.getSession();
+        session.setAttribute("playlist", playlist);
+        session.setAttribute("songs", songs);
+        String playlistPath = "/WEB-INF/playlist.html";
+        forward(request, response, playlistPath);
+    }
+    private void forward(HttpServletRequest request, HttpServletResponse response, String path) throws IOException {
         ServletContext servletContext = getServletContext();
         final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
         templateEngine.process(path, ctx, response.getWriter());

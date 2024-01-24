@@ -116,56 +116,6 @@ public class SongDAO {
     }
 
     /**
-     * This method finds all songs in a playlist
-     * @param playlistId the id of the playlist
-     * @return a list of all songs in the playlist
-     * @throws SQLException if something goes wrong while searching for the songs
-     */
-    public List<Song> findAllSongsByPlaylistId(int playlistId) throws SQLException {
-        List<Song> songs = new ArrayList<>();
-        String query = "SELECT * FROM binder WHERE playlist_id = ?";
-        ResultSet resultSet = null;
-        PreparedStatement preparedStatement = null;
-
-        try {
-            preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setInt(1, playlistId);
-            resultSet = preparedStatement.executeQuery();
-
-            while (resultSet.next()) {
-                Song song = new Song();
-                song.setId(resultSet.getInt("id"));
-                song.setTitle(resultSet.getString("title"));
-                song.setCoverPath(resultSet.getString("cover_path"));
-                song.setAlbum(resultSet.getString("album"));
-                song.setArtist(resultSet.getString("artist"));
-                song.setAlbumYear(resultSet.getInt("album_year"));
-                song.setGenre(resultSet.getString("genre"));
-                song.setFilePath(resultSet.getString("file_path"));
-                song.setUploaderId(resultSet.getInt("uploader_id"));
-                songs.add(song);
-            }
-        }
-        catch (SQLException e) {
-            throw new SQLException("Something went wrong while searching for the songs: " + e.getMessage());
-        }
-        finally {
-            try {
-                if (resultSet != null) {
-                    resultSet.close();
-                }
-                if (preparedStatement != null) {
-                    preparedStatement.close();
-                }
-            }
-            catch (SQLException e) {
-                throw new SQLException("Something went wrong while closing resources: " + e.getMessage());
-            }
-        }
-        return songs;
-    }
-
-    /**
      * This method finds all songs uploaded by a user
      * @param uploaderId the id of the user
      * @return a list of all songs uploaded by the user

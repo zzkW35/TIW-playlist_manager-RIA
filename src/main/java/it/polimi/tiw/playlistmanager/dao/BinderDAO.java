@@ -4,8 +4,11 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 
 import it.polimi.tiw.playlistmanager.beans.Binder;
+import it.polimi.tiw.playlistmanager.beans.Song;
 
 public class BinderDAO {
 private Connection connection;
@@ -147,4 +150,56 @@ private Connection connection;
             }
         }
     }
+
+    // Find all the songs, given the playlistId
+    public List<Song> findAllSongsByPlaylistId(int playlistId) throws SQLException {
+        String query = "SELECT * FROM song INNER JOIN binder ON song.id = binder.song_id WHERE binder.playlist_id = ?";
+        List<Song> songs;
+        ResultSet resultSet = null;
+        PreparedStatement preparedStatement = null;
+
+        try {
+            preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setInt(1, playlistId);
+            resultSet = preparedStatement.executeQuery();
+            songs = new ArrayList<>();
+
+            while (resultSet.next()) {
+                Song song = new Song();
+                song.setId(resultSet.getInt("id"));
+                song.setTitle(resultSet.getString("title"));
+                song.setCoverPath(resultSet.getString("cover_path"));
+                song.setAlbum(resultSet.getString("album"));
+                song.setArtist(resultSet.getString("artist"));
+                song.setAlbumYear(resultSet.getInt("album_year"));
+                song.setGenre(resultSet.getString("genre"));
+                song.setFilePath(resultSet.getString("file_path"));
+                song.setUploaderId(resultSet.getInt("uploader_id"));
+                songs.add(song);
+            }
+        }
+        catch (SQLException e) {
+            throw new SQLException("Something went wrong while searching for the songs: " + e.getMessage());
+        }
+        finally {
+            try {
+                if (resultSet != null) {
+                    resultSet.close();
+                }
+            }
+            catch (SQLException e) {
+                throw new SQLException("Something went wrong while closing resultSet: " + e.getMessage());
+            }
+            try {
+                if (preparedStatement != null) {
+                    preparedStatement.close();
+                }
+            }
+            catch (SQLException e) {
+                throw new SQLException("Something went wrong while closing preparedStatement: " + e.getMessage());
+            }
+        }
+        return songs;
+    }
+
 }
