@@ -40,9 +40,6 @@ public class PlaylistDAO {
                 playlist.setCreationDate(resultSet.getDate("creation_date"));
                 playlist.setOwnerId(resultSet.getInt("owner_id"));
             }
-            if (playlist == null) {
-                throw new SQLException("Playlist not found");
-            }
         }
         catch (SQLException e) {
             throw new SQLException("Something went wrong while searching for the playlist: " + e.getMessage());
@@ -73,8 +70,9 @@ public class PlaylistDAO {
      * @param title the title of the playlist
      * @param ownerId the id of the user who owns the playlist
      * @throws SQLException if something goes wrong while creating the playlist
+     * @return the id of the playlist just created
      */
-    public void createPlaylist(String title, int ownerId) throws SQLException {
+    public int createPlaylist(String title, int ownerId) throws SQLException {
         String query = "INSERT INTO playlist (title, owner_id, creation_date) VALUES (?, ?, NOW())";
         PreparedStatement preparedStatement = null;
 
@@ -97,6 +95,7 @@ public class PlaylistDAO {
                 throw new SQLException("Something went wrong while closing preparedStatement: " + e.getMessage());
             }
         }
+        return findPlaylistByTitle(title).getId();
     }
 
     /**
@@ -123,9 +122,6 @@ public class PlaylistDAO {
                 playlist.setCreationDate(resultSet.getDate("creation_date"));
                 playlist.setOwnerId(resultSet.getInt("owner_id"));
                 playlists.add(playlist);
-            }
-            if (playlists.isEmpty()) {
-                throw new SQLException("No playlists found");
             }
         }
         catch (SQLException e) {
@@ -178,9 +174,6 @@ public class PlaylistDAO {
                 playlist.setOwnerId(resultSet.getInt("owner_id"));
                 playlists.add(playlist);
             }
-            if (playlists.isEmpty()) {
-                throw new SQLException("No playlists found");
-            }
         }
         catch (SQLException e) {
             throw new SQLException("Something went wrong while searching for the playlists: " + e.getMessage());
@@ -204,5 +197,50 @@ public class PlaylistDAO {
             }
         }
         return playlists;
+    }
+
+    /**
+     * This method finds a playlist by its title
+     * @param title the title of the playlist to find
+     * @return the playlist with the given title
+     * @throws SQLException if something goes wrong while searching for the playlist
+     */
+    public Playlist findPlaylistByTitle(String title) throws SQLException {
+        String query = "SELECT * FROM playlist WHERE title = ?";
+        Playlist playlist = null;
+        ResultSet resultSet = null;
+        PreparedStatement preparedStatement = null;
+
+        try {
+            preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setString(1, title);
+            resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                playlist = new Playlist();
+                playlist.setId(resultSet.getInt("id"));
+                playlist.setTitle(resultSet.getString("title"));
+                playlist.setCreationDate(resultSet.getDate("creation_date"));
+                playlist.setOwnerId(resultSet.getInt("owner_id"));
+            }
+        } catch (SQLException e) {
+            throw new SQLException("Something went wrong while searching for the playlist: " + e.getMessage());
+        } finally {
+            try {
+                if (resultSet != null) {
+                    resultSet.close();
+                }
+            } catch (SQLException e) {
+                throw new SQLException("Something went wrong while closing resultSet: " + e.getMessage());
+            }
+            try {
+                if (preparedStatement != null) {
+                    preparedStatement.close();
+                }
+            } catch (SQLException e) {
+                throw new SQLException("Something went wrong while closing preparedStatement: " + e.getMessage());
+            }
+        }
+        return playlist;
     }
 }

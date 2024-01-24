@@ -59,11 +59,9 @@ public class UploadSong extends HttpServlet {
 		String songFilePath;
 		User songUploader = (User) request.getSession().getAttribute("currentUser");
 		int songUploaderId = songUploader.getId();
-		songTitle = request.getParameter("songTitle");
-		System.out.println(songTitle);
-
 
 		try {
+			songTitle = request.getParameter("songTitle");
 			songCoverPath = request.getParameter("songCoverPath");
 			songAlbum = request.getParameter("songAlbum");
 			songArtist = request.getParameter("songArtist");

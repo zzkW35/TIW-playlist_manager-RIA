@@ -12,7 +12,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import it.polimi.tiw.playlistmanager.beans.Playlist;
+import it.polimi.tiw.playlistmanager.beans.Song;
 import it.polimi.tiw.playlistmanager.dao.PlaylistDAO;
+import it.polimi.tiw.playlistmanager.dao.SongDAO;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
@@ -85,10 +87,21 @@ public class Login extends HttpServlet {
             return;
         }
 
-        // Save user and playlists in the session
+        // Get the songs of the user from the database
+        SongDAO songDAO = new SongDAO(connection);
+        List<Song> userSongs;
+        try {
+            userSongs = songDAO.findAllSongsByUserId(user.getId());
+        } catch (Exception e) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Error is: " + e.getMessage());
+            return;
+        }
+
+        // Save user, their playlists and their songs in the session
         HttpSession session = request.getSession();
         session.setAttribute("currentUser", user);
         session.setAttribute("orderedUserPlaylists", orderedUserPlaylists);
+        session.setAttribute("userSongs", userSongs);
         String homePath = "/WEB-INF/home.html";
         forward(request, response, homePath);
     }

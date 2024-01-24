@@ -46,9 +46,6 @@ public class SongDAO {
                 song.setFilePath(resultSet.getString("file_path"));
                 song.setUploaderId(resultSet.getInt("uploader_id"));
             }
-            if (song == null) {
-                throw new SQLException("Song not found");
-            }
         } catch (SQLException e) {
             throw new SQLException("Something went wrong while searching for the song: " + e.getMessage());
         } finally {
@@ -148,9 +145,6 @@ public class SongDAO {
                 song.setUploaderId(resultSet.getInt("uploader_id"));
                 songs.add(song);
             }
-            if (songs.isEmpty()) {
-                throw new SQLException("No songs found");
-            }
         }
         catch (SQLException e) {
             throw new SQLException("Something went wrong while searching for the songs: " + e.getMessage());
@@ -165,6 +159,53 @@ public class SongDAO {
                 }
             }
             catch (SQLException e) {
+                throw new SQLException("Something went wrong while closing resources: " + e.getMessage());
+            }
+        }
+        return songs;
+    }
+
+    /**
+     * This method finds all songs uploaded by a user
+     * @param uploaderId the id of the user
+     * @return a list of all songs uploaded by the user
+     * @throws SQLException if something goes wrong while searching for the songs
+     */
+    public List<Song> findAllSongsByUserId(int uploaderId) throws SQLException {
+        List<Song> songs = new ArrayList<>();
+        String query = "SELECT * FROM song WHERE uploader_id = ?";
+        ResultSet resultSet = null;
+        PreparedStatement preparedStatement = null;
+
+        try {
+            preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setInt(1, uploaderId);
+            resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                Song song = new Song();
+                song.setId(resultSet.getInt("id"));
+                song.setTitle(resultSet.getString("title"));
+                song.setCoverPath(resultSet.getString("cover_path"));
+                song.setAlbum(resultSet.getString("album"));
+                song.setArtist(resultSet.getString("artist"));
+                song.setAlbumYear(resultSet.getInt("album_year"));
+                song.setGenre(resultSet.getString("genre"));
+                song.setFilePath(resultSet.getString("file_path"));
+                song.setUploaderId(resultSet.getInt("uploader_id"));
+                songs.add(song);
+            }
+        } catch (SQLException e) {
+            throw new SQLException("Something went wrong while searching for the songs: " + e.getMessage());
+        } finally {
+            try {
+                if (resultSet != null) {
+                    resultSet.close();
+                }
+                if (preparedStatement != null) {
+                    preparedStatement.close();
+                }
+            } catch (SQLException e) {
                 throw new SQLException("Something went wrong while closing resources: " + e.getMessage());
             }
         }
