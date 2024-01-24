@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="it">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/styles.css}">
+    <title>Playlist Page</title>
+</head>
+<body>
+    <div class="home-title">Welcome back, <span th:text="${session.currentUser.name}">current user!</span></div>
+</body>
+</html>

@@ -16,7 +16,7 @@ import it.polimi.tiw.playlistmanager.handlers.ConnectionHandler;
 import static it.polimi.tiw.playlistmanager.handlers.ThymeleafHandler.handler;
 
 /**
- * Servlet implementation class Login
+ * Servlet implementation class GoToLoginPage
  */
 @WebServlet("/GoToLoginPage")
 public class GoToLoginPage extends HttpServlet {
@@ -30,7 +30,6 @@ public class GoToLoginPage extends HttpServlet {
      */
     public GoToLoginPage() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
 	public void init() throws ServletException {

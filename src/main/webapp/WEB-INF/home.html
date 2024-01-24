@@ -14,10 +14,10 @@
         <div th:if="${#lists.isEmpty(session.orderedUserPlaylists)}" class="playlist-card">
             <div class="playlist-title">No playlists available</div>
         </div>
-        <div th:each="playlist : ${session.orderedUserPlaylists}" class="playlist-card">
+        <a th:each="playlist : ${session.orderedUserPlaylists}" th:href="@{/GoToPlaylistPage}" class="playlist-card">
             <div class="playlist-title" th:text="${playlist.title}"></div>
             <div class="playlist-date" th:text="${#dates.format(playlist.creationDate, 'dd/MM/yyyy')}"></div>
-        </div>
+        </a>
     </div>
     <div class="upload-song">
         <h2>Upload a New Song:</h2>
