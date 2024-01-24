@@ -11,12 +11,21 @@
         <h2 th:text="${session.playlist.title}">Playlist Name</h2>
         <table>
             <tr>
-                <th th:each="song, stat : ${session.songs}" th:if="${stat.count <= 5}">
+                <th th:each="song, stat : ${session.trimmedSongList}" th:if="${stat.count <= 5}">
                     <img th:src="${song.coverPath}" alt="Album Cover">
                     <p th:text="${song.title}">Song Name</p>
                 </th>
             </tr>
         </table>
     </div>
+    <form th:action="@{/BrowseSongs}" method="post">
+        <input type="hidden" name="direction" value="next">
+        <input type="submit" value="Next Song">
+    </form>
+
+    <form th:action="@{/BrowseSongs}" method="post">
+        <input type="hidden" name="direction" value="previous">
+        <input type="submit" value="Previous Song">
+    </form>
 </body>
 </html>

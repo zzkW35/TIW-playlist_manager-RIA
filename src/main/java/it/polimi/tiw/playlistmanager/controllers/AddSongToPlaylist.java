@@ -40,7 +40,13 @@ public class AddSongToPlaylist extends HttpServlet {
         ServletContext servletContext = getServletContext();
         this.templateEngine = ThymeleafHandler.handler(servletContext);
     }
-
+    @Override
+//    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+//        // Handle GET request
+//        // For example, you might want to display a form to the user
+//        String path = "/WEB-INF/home.html";
+//        forward(request, response, path);
+//    }
     /**
      * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
      */

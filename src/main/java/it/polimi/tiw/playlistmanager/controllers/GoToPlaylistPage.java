@@ -85,13 +85,24 @@ public class GoToPlaylistPage extends HttpServlet {
             return;
         }
 
+        // Get the first 5 songs
+        List<Song> trimmedSongList = songs.subList(0, Math.min(5, songs.size()));
+
         // Add the playlist and the songs to the parameters and redirect to the playlist page
         HttpSession session = request.getSession();
         session.setAttribute("playlist", playlist);
         session.setAttribute("songs", songs);
+        session.setAttribute("trimmedSongList", trimmedSongList);
+        session.setAttribute("songIndex", 5);
         String playlistPath = "/WEB-INF/playlist.html";
         forward(request, response, playlistPath);
     }
+
+//    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+//        // TODO Auto-generated method stub
+//        doGet(request, response);
+//    }
+
     private void forward(HttpServletRequest request, HttpServletResponse response, String path) throws IOException {
         ServletContext servletContext = getServletContext();
         final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
