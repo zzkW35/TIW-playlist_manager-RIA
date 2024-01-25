@@ -7,9 +7,7 @@
     <title>Playlist Page</title>
 </head>
 <body>
-    <div class="home-title">Welcome back, <span th:text="${session.currentUser.name}">current user!</span></div>
     <div class="playlist">
-        <p>Current Page: <span th:text="${session.currentPage}"></span></p>
         <h2 th:text="${session.playlist.title}">Playlist Name</h2>
         <div class="table-container">
             <form th:action="@{/BrowseSongs}" method="get" th:if="${session.currentPage > 1}">
