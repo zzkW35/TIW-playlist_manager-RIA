@@ -22,7 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
- * Servlet implementation class AddSongToPlaylist
+ * Servlet implementation class CreateNewPlaylist
  */
 @WebServlet("/CreateNewPlaylist")
 public class CreateNewPlaylist extends HttpServlet {
