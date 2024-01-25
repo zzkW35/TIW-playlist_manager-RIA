@@ -19,14 +19,14 @@
             </tr>
         </table>
     </div>
-    <form th:action="@{/BrowseSongs}" method="post">
+    <form th:action="@{/BrowseSongs}" method="get" th:if="${session.hasNextPage == 1}">
         <input type="hidden" name="direction" value="next">
-        <input type="submit" value="Next Song">
+        <input type="submit" value="Next group">
     </form>
 
-    <form th:action="@{/BrowseSongs}" method="post">
+    <form th:action="@{/BrowseSongs}" method="get" th:if="${session.currentPage > 1}">
         <input type="hidden" name="direction" value="previous">
-        <input type="submit" value="Previous Song">
+        <input type="submit" value="Previous group">
     </form>
     <div class="add-to-playlist">
         <h2>Add a new song to this playlist:</h2>

@@ -97,6 +97,13 @@ public class GoToPlaylistPage extends HttpServlet {
             return;
         }
 
+        // If number of songs > 5 set attribute
+        if (songs.size() > 5) {
+            request.getSession().setAttribute("hasNextPage", 1);
+        } else {
+            request.getSession().setAttribute("hasNextPage", 0);
+        }
+        request.getSession().setAttribute("hasPreviousPage", 0);
         // Add the playlist and the songs to the parameters and redirect to the playlist page
         HttpSession session = request.getSession();
         session.setAttribute("playlist", playlist);

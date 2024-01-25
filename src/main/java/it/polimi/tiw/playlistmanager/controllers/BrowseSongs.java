@@ -47,6 +47,9 @@ public class BrowseSongs extends HttpServlet {
 			return;
 		}
 
+		//Get number of pages
+		int numberOfPages = getNumberOfPages(songs, request);
+
 		// Check if the user wants to go to the next song or to the previous one
 		String direction = request.getParameter("direction");
 		if (direction == null || direction.isEmpty()) {
@@ -54,7 +57,7 @@ public class BrowseSongs extends HttpServlet {
 			return;
 		}
 		if (direction.equals("next")) {
-			goToNextPage(request);
+			goToNextPage(request, numberOfPages);
 		} else if (direction.equals("previous")) {
 			goToPreviousPage(request);
 		} else {
@@ -62,21 +65,10 @@ public class BrowseSongs extends HttpServlet {
 			return;
 		}
 
-		forward(request, response, "/WEB-INF/playlist.html");
+		String playlistPath = "/WEB-INF/playlist.html";
+		forward(request, response, playlistPath);
 	}
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		doGet(request, response);
-	}
-	private void forward(HttpServletRequest request, HttpServletResponse response, String path) throws IOException {
-		ServletContext servletContext = getServletContext();
-		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
-		templateEngine.process(path, ctx, response.getWriter());
-	}
 	private static final int SONGS_PER_PAGE = 5;
 	private List<Song> getCurrentPageSongs(List<Song> songList, int CurrentPage) {
 		int startIndex = (CurrentPage - 1) * SONGS_PER_PAGE;
@@ -90,7 +82,8 @@ public class BrowseSongs extends HttpServlet {
 
 	private int getCurrentPage(HttpServletRequest request) {
 		HttpSession session = request.getSession();
-		String pageString = (String) session.getAttribute("page");
+		Integer currentPageInteger = (Integer) session.getAttribute("currentPage");
+		String pageString = currentPageInteger != null ? Integer.toString(currentPageInteger) : null;
 		if (pageString == null) {
 			return 1;
 		}
@@ -101,24 +94,26 @@ public class BrowseSongs extends HttpServlet {
 		}
 	}
 
-	private int getNumberOfPages(List<Song> songList) {
-		return (int) Math.ceil((double) songList.size() / SONGS_PER_PAGE);
+	private int getNumberOfPages(List<Song> songList, HttpServletRequest request) {
+		HttpSession session = request.getSession();
+		int numberOfPages = (int) Math.ceil((double) songList.size() / SONGS_PER_PAGE);
+		session.setAttribute("numberOfPages", numberOfPages);
+		return numberOfPages;
 	}
 
-	// Go to next page of songs
-	private void goToNextPage(HttpServletRequest request) throws IOException {
+	private void goToNextPage(HttpServletRequest request, int numberOfPages) throws IOException {
 		HttpSession session = request.getSession();
 		List<Song> songs = (List<Song>) session.getAttribute("songs");
 		int currentPage = getCurrentPage(request);
-		int numberOfPages = getNumberOfPages(songs);
 		if (currentPage < numberOfPages) {
 			currentPage++;
 		}
+		System.out.println("number of pages: " + numberOfPages);
+		session.setAttribute("hasNextPage", currentPage < numberOfPages ? 1 : 0);
 		session.setAttribute("trimmedSongList", getCurrentPageSongs(songs, currentPage));
 		session.setAttribute("currentPage", currentPage);
 	}
 
-	// Go to previous page of songs
 	private void goToPreviousPage(HttpServletRequest request) throws IOException {
 		HttpSession session = request.getSession();
 		List<Song> songs = (List<Song>) session.getAttribute("songs");
@@ -126,8 +121,15 @@ public class BrowseSongs extends HttpServlet {
 		if (currentPage > 1) {
 			currentPage--;
 		}
+		session.setAttribute("hasPreviousPage", currentPage > 1 ? 1 : 0);
+		session.setAttribute("hasNextPage", 1);
 		session.setAttribute("trimmedSongList", getCurrentPageSongs(songs, currentPage));
 		session.setAttribute("currentPage", currentPage);
 	}
 
+	private void forward(HttpServletRequest request, HttpServletResponse response, String path) throws IOException {
+		ServletContext servletContext = getServletContext();
+		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
+		templateEngine.process(path, ctx, response.getWriter());
+	}
 }
