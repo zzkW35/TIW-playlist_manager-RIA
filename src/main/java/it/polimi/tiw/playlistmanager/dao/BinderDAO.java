@@ -202,4 +202,55 @@ private Connection connection;
         return songs;
     }
 
+    public List<Song> findAllSongsOfUserNotInPlaylist(int playlistId, int userId) throws SQLException {
+        String query = "SELECT * FROM song WHERE uploader_id = ? AND id NOT IN (SELECT song_id FROM binder WHERE playlist_id = ?)";
+        List<Song> songs;
+        ResultSet resultSet = null;
+        PreparedStatement preparedStatement = null;
+
+        try {
+            preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setInt(1, userId);
+            preparedStatement.setInt(2, playlistId);
+            resultSet = preparedStatement.executeQuery();
+            songs = new ArrayList<>();
+
+            while (resultSet.next()) {
+                Song song = new Song();
+                song.setId(resultSet.getInt("id"));
+                song.setTitle(resultSet.getString("title"));
+                song.setCoverPath(resultSet.getString("cover_path"));
+                song.setAlbum(resultSet.getString("album"));
+                song.setArtist(resultSet.getString("artist"));
+                song.setAlbumYear(resultSet.getInt("album_year"));
+                song.setGenre(resultSet.getString("genre"));
+                song.setFilePath(resultSet.getString("file_path"));
+                song.setUploaderId(resultSet.getInt("uploader_id"));
+                songs.add(song);
+            }
+        }
+        catch (SQLException e) {
+            throw new SQLException("Something went wrong while searching for the songs: " + e.getMessage());
+        }
+        finally {
+            try {
+                if (resultSet != null) {
+                    resultSet.close();
+                }
+            }
+            catch (SQLException e) {
+                throw new SQLException("Something went wrong while closing resultSet: " + e.getMessage());
+            }
+            try {
+                if (preparedStatement != null) {
+                    preparedStatement.close();
+                }
+            }
+            catch (SQLException e) {
+                throw new SQLException("Something went wrong while closing preparedStatement: " + e.getMessage());
+            }
+        }
+        return songs;
+    }
+
 }

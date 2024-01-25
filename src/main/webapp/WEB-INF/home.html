@@ -39,18 +39,18 @@
             <input type="submit" value="Upload Song">
         </form>
     </div>
-<div class="create-playlist">
-    <h2>Create a New Playlist:</h2>
-    <form method="post" th:action="@{/AddSongToPlaylist}">
-        <label for="playlistTitle">Playlist Name:</label><br>
-        <input type="text" id="playlistTitle" name="playlistTitle" required><br>
-        <label for="songSelection">Select Songs:</label><br>
-        <select id="songSelection" name="songSelection" multiple required>
-            <option th:if="${#lists.isEmpty(session.userSongs)}" disabled>No songs available</option>
-            <option th:each="song : ${session.userSongs}" th:value="${song.id}" th:text="${song.title}"></option>
-        </select><br>
-        <input type="submit" value="Create Playlist">
-    </form>
-</div>
+    <div class="create-playlist">
+        <h2>Create a New Playlist:</h2>
+        <form method="post" th:action="@{/AddSongToPlaylist}">
+            <label for="playlistTitle">Playlist Name:</label><br>
+            <input type="text" id="playlistTitle" name="playlistTitle" required><br>
+            <label for="songSelection">Select Songs:</label><br>
+            <select id="songSelection" name="songSelection" multiple required>
+                <option th:if="${#lists.isEmpty(session.userSongs)}" disabled>No songs available</option>
+                <option th:each="song : ${session.userSongs}" th:value="${song.id}" th:text="${song.title}"></option>
+            </select><br>
+            <input type="submit" value="Create Playlist">
+        </form>
+    </div>
 </body>
 </html>

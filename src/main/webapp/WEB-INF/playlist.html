@@ -11,7 +11,7 @@
         <h2 th:text="${session.playlist.title}">Playlist Name</h2>
         <table>
             <tr>
-                <th th:each="song, stat : ${session.trimmedSongList}" th:if="${stat.count <= 5}">
+                <th th:each="song, stat : ${session.songs}" th:if="${stat.count <= 5}">
                     <img th:src="${song.coverPath}" alt="Album Cover">
                     <p th:text="${song.title}">Song Name</p>
                 </th>
@@ -27,5 +27,16 @@
         <input type="hidden" name="direction" value="previous">
         <input type="submit" value="Previous Song">
     </form>
+    <div class="add-to-playlist">
+        <h2>Add a new song to this playlist:</h2>
+        <form method="post" th:action="@{/AddSongToExistingPlaylist}">
+            <label for="songSelection">Select Songs:</label><br>
+            <select id="songSelection" name="songSelection" multiple required>
+                <option th:if="${#lists.isEmpty(session.songsNotInPlaylist)}" disabled>No songs available</option>
+                <option th:each="song : ${session.songsNotInPlaylist}" th:value="${song.id}" th:text="${song.title}"></option>
+            </select><br>
+            <input type="submit" value="Add to Playlist">
+        </form>
+    </div>
 </body>
 </html>

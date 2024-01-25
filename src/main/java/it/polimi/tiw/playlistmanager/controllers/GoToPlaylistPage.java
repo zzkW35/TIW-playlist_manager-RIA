@@ -13,6 +13,7 @@ import javax.servlet.http.HttpSession;
 
 import it.polimi.tiw.playlistmanager.beans.Playlist;
 import it.polimi.tiw.playlistmanager.beans.Song;
+import it.polimi.tiw.playlistmanager.beans.User;
 import it.polimi.tiw.playlistmanager.dao.BinderDAO;
 import it.polimi.tiw.playlistmanager.dao.PlaylistDAO;
 import org.thymeleaf.TemplateEngine;
@@ -29,7 +30,6 @@ public class GoToPlaylistPage extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private Connection connection;
     private TemplateEngine templateEngine;
-
 
     /**
      * @see HttpServlet#HttpServlet()
@@ -51,6 +51,7 @@ public class GoToPlaylistPage extends HttpServlet {
 
         // Get the playlistId from the request
         String playlistIdString = request.getParameter("playlistId");
+        User currentUser = (User) request.getSession().getAttribute("currentUser");
         if (playlistIdString == null || playlistIdString.isEmpty()) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing playlistId");
             return;
@@ -84,16 +85,29 @@ public class GoToPlaylistPage extends HttpServlet {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Something went wrong while retrieving the songs: " + e.getMessage());
             return;
         }
+        // Order songs by their albumYear
+        songs.sort((s1, s2) -> s2.getAlbumYear() - s1.getAlbumYear());
 
         // Get the first 5 songs
         List<Song> trimmedSongList = songs.subList(0, Math.min(5, songs.size()));
 
+        // Get songs not in the playlist
+        List<Song> songsNotInPlaylist;
+        try {
+            songsNotInPlaylist = binderDAO.findAllSongsOfUserNotInPlaylist(playlistId, currentUser.getId());
+        } catch (Exception e) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Something went wrong while retrieving the songs: " + e.getMessage());
+            return;
+        }
+
         // Add the playlist and the songs to the parameters and redirect to the playlist page
         HttpSession session = request.getSession();
         session.setAttribute("playlist", playlist);
+        session.setAttribute("playlistTitle", playlist.getTitle());
         session.setAttribute("songs", songs);
         session.setAttribute("trimmedSongList", trimmedSongList);
-        session.setAttribute("songIndex", 5);
+        session.setAttribute("songIndex", songs.size());
+        session.setAttribute("songsNotInPlaylist", songsNotInPlaylist);
         String playlistPath = "/WEB-INF/playlist.html";
         forward(request, response, playlistPath);
     }
