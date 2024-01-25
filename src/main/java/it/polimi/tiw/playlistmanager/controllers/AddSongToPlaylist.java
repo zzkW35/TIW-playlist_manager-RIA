@@ -3,7 +3,6 @@ package it.polimi.tiw.playlistmanager.controllers;
 import it.polimi.tiw.playlistmanager.beans.User;
 import it.polimi.tiw.playlistmanager.dao.BinderDAO;
 import it.polimi.tiw.playlistmanager.dao.PlaylistDAO;
-import it.polimi.tiw.playlistmanager.dao.SongDAO;
 import it.polimi.tiw.playlistmanager.handlers.ConnectionHandler;
 import it.polimi.tiw.playlistmanager.handlers.ThymeleafHandler;
 import org.thymeleaf.TemplateEngine;
@@ -77,7 +76,6 @@ public class AddSongToPlaylist extends HttpServlet {
 
         // Create the binder between the playlist and the songs
         BinderDAO binderDAO = new BinderDAO(connection);
-        SongDAO songDAO = new SongDAO(connection);
         for (String songIdStr : songIds) {
             try {
                 int songId = Integer.parseInt(songIdStr);

@@ -1,12 +1,10 @@
 package it.polimi.tiw.playlistmanager.controllers;
 
 import it.polimi.tiw.playlistmanager.beans.Song;
-import it.polimi.tiw.playlistmanager.handlers.ConnectionHandler;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
 import java.io.IOException;
-import java.sql.Connection;
 import java.util.List;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -24,7 +22,6 @@ import static it.polimi.tiw.playlistmanager.handlers.ThymeleafHandler.handler;
 @WebServlet("/BrowseSongs")
 public class BrowseSongs extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private Connection connection;
 	private TemplateEngine templateEngine;
     /**
      * @see HttpServlet#HttpServlet()
@@ -34,7 +31,6 @@ public class BrowseSongs extends HttpServlet {
     }
 
 	public void init() throws ServletException {
-//		connection = ConnectionHandler.getConnection(getServletContext());
 		ServletContext servletContext = getServletContext();
 		this.templateEngine = handler(servletContext);
 	}
@@ -43,9 +39,6 @@ public class BrowseSongs extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-//		response.getWriter().append("Served at: ").append(request.getContextPath());
-
 		// Get the song list from the request
 		HttpSession session = request.getSession();
 		List<Song> songs = (List<Song>) session.getAttribute("songs");
@@ -54,10 +47,6 @@ public class BrowseSongs extends HttpServlet {
 			return;
 		}
 
-//		int songIndex = (int) session.getAttribute("songIndex");
-//		int updatedSongIndex = songIndex;
-//		System.out.println("songindex: " + songIndex + " updatedSongIndex: " + updatedSongIndex);
-//
 		// Check if the user wants to go to the next song or to the previous one
 		String direction = request.getParameter("direction");
 		if (direction == null || direction.isEmpty()) {
@@ -65,24 +54,15 @@ public class BrowseSongs extends HttpServlet {
 			return;
 		}
 		if (direction.equals("next")) {
-			goToNextPage(request, response);
+			goToNextPage(request);
 		} else if (direction.equals("previous")) {
-			goToPreviousPage(request, response);
+			goToPreviousPage(request);
 		} else {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid direction");
 			return;
 		}
 
-//
-//		// Update the song index in the session
-//		session.setAttribute("songIndex", updatedSongIndex);
-//		// Redirect to the BrowseSongs page
-//		String playlistPath = "/WEB-INF/playlist.html";
-//		forward(request, response, playlistPath);
-//		String playlistPath = "/WEB-INF/playlist.html";
-//		forward(request, response, playlistPath);
 		forward(request, response, "/WEB-INF/playlist.html");
-
 	}
 
 	/**
@@ -98,7 +78,7 @@ public class BrowseSongs extends HttpServlet {
 		templateEngine.process(path, ctx, response.getWriter());
 	}
 	private static final int SONGS_PER_PAGE = 5;
-	private List<Song> getCurrentPageSongs(HttpServletRequest request, List<Song> songList, int CurrentPage) {
+	private List<Song> getCurrentPageSongs(List<Song> songList, int CurrentPage) {
 		int startIndex = (CurrentPage - 1) * SONGS_PER_PAGE;
 		int endIndex = Math.min(startIndex + SONGS_PER_PAGE, songList.size());
 		try {
@@ -111,7 +91,6 @@ public class BrowseSongs extends HttpServlet {
 	private int getCurrentPage(HttpServletRequest request) {
 		HttpSession session = request.getSession();
 		String pageString = (String) session.getAttribute("page");
-//		String pageString = request.getParameter("page");
 		if (pageString == null) {
 			return 1;
 		}
@@ -127,7 +106,7 @@ public class BrowseSongs extends HttpServlet {
 	}
 
 	// Go to next page of songs
-	private void goToNextPage(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	private void goToNextPage(HttpServletRequest request) throws IOException {
 		HttpSession session = request.getSession();
 		List<Song> songs = (List<Song>) session.getAttribute("songs");
 		int currentPage = getCurrentPage(request);
@@ -135,31 +114,20 @@ public class BrowseSongs extends HttpServlet {
 		if (currentPage < numberOfPages) {
 			currentPage++;
 		}
-		session.setAttribute("trimmedSongList", getCurrentPageSongs(request, songs, currentPage));
+		session.setAttribute("trimmedSongList", getCurrentPageSongs(songs, currentPage));
 		session.setAttribute("currentPage", currentPage);
-//		response.sendRedirect(getServletContext().getContextPath() + "/RefreshPlaylistPage");
-		System.out.println("current page: " + currentPage + " number of pages: " + numberOfPages);
-		for (Song song : getCurrentPageSongs(request, songs, currentPage)) {
-			System.out.println(song.getTitle());
-		}
 	}
 
 	// Go to previous page of songs
-	private void goToPreviousPage(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	private void goToPreviousPage(HttpServletRequest request) throws IOException {
 		HttpSession session = request.getSession();
 		List<Song> songs = (List<Song>) session.getAttribute("songs");
 		int currentPage = getCurrentPage(request);
-		int numberOfPages = getNumberOfPages(songs);
 		if (currentPage > 1) {
 			currentPage--;
 		}
-		session.setAttribute("trimmedSongList", getCurrentPageSongs(request, songs, currentPage));
+		session.setAttribute("trimmedSongList", getCurrentPageSongs(songs, currentPage));
 		session.setAttribute("currentPage", currentPage);
-//		response.sendRedirect(getServletContext().getContextPath() + "/RefreshPlaylistPage");
-		System.out.println("current page: " + currentPage + " number of pages: " + numberOfPages);
-		for (Song song : getCurrentPageSongs(request, songs, currentPage)) {
-			System.out.println(song.getTitle());
-		}
 	}
 
 }
