@@ -88,9 +88,6 @@ public class GoToPlaylistPage extends HttpServlet {
         // Order songs by their albumYear
         songs.sort((s1, s2) -> s2.getAlbumYear() - s1.getAlbumYear());
 
-        // Get the first 5 songs
-//        List<Song> trimmedSongList = songs.subList(0, Math.min(5, songs.size()));
-
         // Get songs not in the playlist
         List<Song> songsNotInPlaylist;
         try {
@@ -104,18 +101,13 @@ public class GoToPlaylistPage extends HttpServlet {
         HttpSession session = request.getSession();
         session.setAttribute("playlist", playlist);
         session.setAttribute("playlistTitle", playlist.getTitle());
-        session.setAttribute("songs", songs);
-        session.setAttribute("trimmedSongList", songs);
+        session.setAttribute("songs", songs); //Full list of songs
+        session.setAttribute("trimmedSongList", songs); //List of songs to be displayed
         session.setAttribute("songIndex", songs.size());
         session.setAttribute("songsNotInPlaylist", songsNotInPlaylist);
         String playlistPath = "/WEB-INF/playlist.html";
         forward(request, response, playlistPath);
     }
-
-//    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-//        // TODO Auto-generated method stub
-//        doGet(request, response);
-//    }
 
     private void forward(HttpServletRequest request, HttpServletResponse response, String path) throws IOException {
         ServletContext servletContext = getServletContext();

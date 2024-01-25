@@ -30,7 +30,7 @@
     </form>
     <div class="add-to-playlist">
         <h2>Add a new song to this playlist:</h2>
-        <form method="post" th:action="@{/AddSongToExistingPlaylist}">
+        <form method="post" th:action="@{/AddSongToPlaylist}">
             <label for="songSelection">Select Songs:</label><br>
             <select id="songSelection" name="songSelection" multiple required>
                 <option th:if="${#lists.isEmpty(session.songsNotInPlaylist)}" disabled>No songs available</option>

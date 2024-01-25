@@ -39,13 +39,6 @@ public class UploadSong extends HttpServlet {
 	}
 
 	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		doPost(request,response);
-	}
-
-	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -72,7 +65,6 @@ public class UploadSong extends HttpServlet {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Incorrect or missing parameters, error is: " + e.getMessage());
 			return;
 		}
-		// Get the current user id from the session
 
 		// Insert the song into the database
 		SongDAO songDAO = new SongDAO(connection);
@@ -85,7 +77,6 @@ public class UploadSong extends HttpServlet {
 		}
 		String homePath = "/WEB-INF/home.html";
 		forward(request, response, homePath);
-
 	}
 	private void forward(HttpServletRequest request, HttpServletResponse response, String path) throws IOException {
 		ServletContext servletContext = getServletContext();

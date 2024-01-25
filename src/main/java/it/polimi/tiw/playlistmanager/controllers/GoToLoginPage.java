@@ -42,7 +42,7 @@ public class GoToLoginPage extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// Redirect to the Home page and add missions to the parameters
+		// Redirect to the login page
 		String loginPage = "/WEB-INF/login.html";
 		forward(request, response, loginPage);
 	}

@@ -102,6 +102,8 @@ public class Login extends HttpServlet {
         session.setAttribute("currentUser", user);
         session.setAttribute("orderedUserPlaylists", orderedUserPlaylists);
         session.setAttribute("userSongs", userSongs);
+
+        // Redirect to the Home page
         String homePath = "/WEB-INF/home.html";
         forward(request, response, homePath);
     }

@@ -1,7 +1,8 @@
 package it.polimi.tiw.playlistmanager.controllers;
 
-import it.polimi.tiw.playlistmanager.beans.Playlist;
+import it.polimi.tiw.playlistmanager.beans.User;
 import it.polimi.tiw.playlistmanager.dao.BinderDAO;
+import it.polimi.tiw.playlistmanager.dao.PlaylistDAO;
 import it.polimi.tiw.playlistmanager.handlers.ConnectionHandler;
 import it.polimi.tiw.playlistmanager.handlers.ThymeleafHandler;
 import org.thymeleaf.TemplateEngine;
@@ -20,8 +21,8 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Servlet implementation class AddSongToPlaylist
  */
-@WebServlet("/AddSongToExistingPlaylist")
-public class AddSongToExistingPlaylist extends HttpServlet {
+@WebServlet("/CreateNewPlaylist")
+public class CreateNewPlaylist extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private Connection connection = null;
     private TemplateEngine templateEngine;
@@ -29,7 +30,7 @@ public class AddSongToExistingPlaylist extends HttpServlet {
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public AddSongToExistingPlaylist() {
+    public CreateNewPlaylist() {
         super();
     }
 
@@ -38,26 +39,32 @@ public class AddSongToExistingPlaylist extends HttpServlet {
         ServletContext servletContext = getServletContext();
         this.templateEngine = ThymeleafHandler.handler(servletContext);
     }
-//    @Override
-//    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-//        // Handle GET request
-//        // For example, you might want to display a form to the user
-//        String path = "/WEB-INF/playlist.html";
-//        forward(request, response, path);
-//    }
+
     /**
      * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
      */
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
+        String playlistTitle;
         String[] songIds;
-        Playlist playlist = (Playlist) request.getSession().getAttribute("playlist");
-        int playlistID = playlist.getId();
+        User songUploader = (User) request.getSession().getAttribute("currentUser");
+        int songUploaderId = songUploader.getId();
+        int playlistID;
 
         try {
+            playlistTitle = request.getParameter("playlistTitle");
             songIds = request.getParameterValues("songSelection");
         } catch (Exception e) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Incorrect or missing parameters, error is: " + e.getMessage());
+            return;
+        }
+
+        // Insert the playlist into the database
+        PlaylistDAO playlistDAO = new PlaylistDAO(connection);
+        try {
+            playlistID = playlistDAO.createPlaylist(playlistTitle, songUploaderId);
+        } catch (Exception e) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Could not add song to playlist: " + e.getMessage());
             return;
         }
 
@@ -75,10 +82,9 @@ public class AddSongToExistingPlaylist extends HttpServlet {
                 return;
             }
         }
-        String playlistIdString = Integer.toString(playlistID);
 
-
-        response.sendRedirect(getServletContext().getContextPath() + "/GoToPlaylistPage?playlistId=" + playlistIdString);
+        String homePath = "/WEB-INF/home.html";
+        forward(request, response, homePath);
 
     }
     private void forward(HttpServletRequest request, HttpServletResponse response, String path) throws IOException {

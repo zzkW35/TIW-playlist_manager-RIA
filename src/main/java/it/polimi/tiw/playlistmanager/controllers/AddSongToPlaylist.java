@@ -1,12 +1,10 @@
 package it.polimi.tiw.playlistmanager.controllers;
 
-import it.polimi.tiw.playlistmanager.beans.User;
+import it.polimi.tiw.playlistmanager.beans.Playlist;
 import it.polimi.tiw.playlistmanager.dao.BinderDAO;
-import it.polimi.tiw.playlistmanager.dao.PlaylistDAO;
 import it.polimi.tiw.playlistmanager.handlers.ConnectionHandler;
 import it.polimi.tiw.playlistmanager.handlers.ThymeleafHandler;
 import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.WebContext;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -39,38 +37,19 @@ public class AddSongToPlaylist extends HttpServlet {
         ServletContext servletContext = getServletContext();
         this.templateEngine = ThymeleafHandler.handler(servletContext);
     }
-    @Override
-//    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-//        // Handle GET request
-//        // For example, you might want to display a form to the user
-//        String path = "/WEB-INF/home.html";
-//        forward(request, response, path);
-//    }
+
     /**
      * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
      */
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-        String playlistTitle;
         String[] songIds;
-        User songUploader = (User) request.getSession().getAttribute("currentUser");
-        int songUploaderId = songUploader.getId();
-        int playlistID;
+        Playlist playlist = (Playlist) request.getSession().getAttribute("playlist");
+        int playlistID = playlist.getId();
 
         try {
-            playlistTitle = request.getParameter("playlistTitle");
             songIds = request.getParameterValues("songSelection");
         } catch (Exception e) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Incorrect or missing parameters, error is: " + e.getMessage());
-            return;
-        }
-
-        // Insert the playlist into the database
-        PlaylistDAO playlistDAO = new PlaylistDAO(connection);
-        try {
-            playlistID = playlistDAO.createPlaylist(playlistTitle, songUploaderId);
-        } catch (Exception e) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Could not add song to playlist: " + e.getMessage());
             return;
         }
 
@@ -88,14 +67,8 @@ public class AddSongToPlaylist extends HttpServlet {
                 return;
             }
         }
+        String playlistIdString = Integer.toString(playlistID);
 
-        String homePath = "/WEB-INF/home.html";
-        forward(request, response, homePath);
-
-    }
-    private void forward(HttpServletRequest request, HttpServletResponse response, String path) throws IOException {
-        ServletContext servletContext = getServletContext();
-        final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
-        templateEngine.process(path, ctx, response.getWriter());
+        response.sendRedirect(getServletContext().getContextPath() + "/GoToPlaylistPage?playlistId=" + playlistIdString);
     }
 }
