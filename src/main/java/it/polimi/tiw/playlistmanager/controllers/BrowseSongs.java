@@ -54,36 +54,35 @@ public class BrowseSongs extends HttpServlet {
 			return;
 		}
 
-		int songIndex = (int) session.getAttribute("songIndex");
-		int updatedSongIndex = songIndex;
-		System.out.println("songindex: " + songIndex + " updatedSongIndex: " + updatedSongIndex);
-
+//		int songIndex = (int) session.getAttribute("songIndex");
+//		int updatedSongIndex = songIndex;
+//		System.out.println("songindex: " + songIndex + " updatedSongIndex: " + updatedSongIndex);
+//
 		// Check if the user wants to go to the next song or to the previous one
 		String direction = request.getParameter("direction");
 		if (direction == null || direction.isEmpty()) {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing direction");
 			return;
 		}
-		try{
-			if (direction.equals("next")) {
-				updatedSongIndex = Math.min(songIndex + 5, songs.size());
-				session.setAttribute("trimmedSongList", songs.subList(songIndex, updatedSongIndex));
-				System.out.println("songindex: " + songIndex + " updatedSongIndex: " + updatedSongIndex);
-			} else if (direction.equals("previous")) {
-				updatedSongIndex = Math.max(0, songIndex - 5);
-				session.setAttribute("trimmedSongList", songs.subList(updatedSongIndex, songIndex));
-				System.out.println("songindex: " + songIndex + " updatedSongIndex: " + updatedSongIndex);
-			}
-		} catch (Exception e) {
+		if (direction.equals("next")) {
+			goToNextPage(request, response);
+		} else if (direction.equals("previous")) {
+			goToPreviousPage(request, response);
+		} else {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid direction");
 			return;
 		}
 
-		// Update the song index in the session
-		session.setAttribute("songIndex", updatedSongIndex);
-		// Redirect to the BrowseSongs page
-		String playlistPath = "/WEB-INF/playlist.html";
-		forward(request, response, playlistPath);
+//
+//		// Update the song index in the session
+//		session.setAttribute("songIndex", updatedSongIndex);
+//		// Redirect to the BrowseSongs page
+//		String playlistPath = "/WEB-INF/playlist.html";
+//		forward(request, response, playlistPath);
+//		String playlistPath = "/WEB-INF/playlist.html";
+//		forward(request, response, playlistPath);
+		forward(request, response, "/WEB-INF/playlist.html");
+
 	}
 
 	/**
@@ -98,7 +97,69 @@ public class BrowseSongs extends HttpServlet {
 		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
 		templateEngine.process(path, ctx, response.getWriter());
 	}
+	private static final int SONGS_PER_PAGE = 5;
+	private List<Song> getCurrentPageSongs(HttpServletRequest request, List<Song> songList, int CurrentPage) {
+		int startIndex = (CurrentPage - 1) * SONGS_PER_PAGE;
+		int endIndex = Math.min(startIndex + SONGS_PER_PAGE, songList.size());
+		try {
+			return songList.subList(startIndex, endIndex);
+		} catch (IndexOutOfBoundsException e) {
+			return null;
+		}
+	}
 
+	private int getCurrentPage(HttpServletRequest request) {
+		HttpSession session = request.getSession();
+		String pageString = (String) session.getAttribute("page");
+//		String pageString = request.getParameter("page");
+		if (pageString == null) {
+			return 1;
+		}
+		try {
+			return Integer.parseInt(pageString);
+		} catch (NumberFormatException e) {
+			return 1;
+		}
+	}
 
+	private int getNumberOfPages(List<Song> songList) {
+		return (int) Math.ceil((double) songList.size() / SONGS_PER_PAGE);
+	}
+
+	// Go to next page of songs
+	private void goToNextPage(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		HttpSession session = request.getSession();
+		List<Song> songs = (List<Song>) session.getAttribute("songs");
+		int currentPage = getCurrentPage(request);
+		int numberOfPages = getNumberOfPages(songs);
+		if (currentPage < numberOfPages) {
+			currentPage++;
+		}
+		session.setAttribute("trimmedSongList", getCurrentPageSongs(request, songs, currentPage));
+		session.setAttribute("currentPage", currentPage);
+//		response.sendRedirect(getServletContext().getContextPath() + "/RefreshPlaylistPage");
+		System.out.println("current page: " + currentPage + " number of pages: " + numberOfPages);
+		for (Song song : getCurrentPageSongs(request, songs, currentPage)) {
+			System.out.println(song.getTitle());
+		}
+	}
+
+	// Go to previous page of songs
+	private void goToPreviousPage(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		HttpSession session = request.getSession();
+		List<Song> songs = (List<Song>) session.getAttribute("songs");
+		int currentPage = getCurrentPage(request);
+		int numberOfPages = getNumberOfPages(songs);
+		if (currentPage > 1) {
+			currentPage--;
+		}
+		session.setAttribute("trimmedSongList", getCurrentPageSongs(request, songs, currentPage));
+		session.setAttribute("currentPage", currentPage);
+//		response.sendRedirect(getServletContext().getContextPath() + "/RefreshPlaylistPage");
+		System.out.println("current page: " + currentPage + " number of pages: " + numberOfPages);
+		for (Song song : getCurrentPageSongs(request, songs, currentPage)) {
+			System.out.println(song.getTitle());
+		}
+	}
 
 }

@@ -83,8 +83,10 @@ public class AddSongToExistingPlaylist extends HttpServlet {
                 return;
             }
         }
+        String playlistIdString = Integer.toString(playlistID);
 
-        response.sendRedirect("/WEB-INF/playlist.html");
+
+        response.sendRedirect(getServletContext().getContextPath() + "/GoToPlaylistPage?playlistId=" + playlistIdString);
 
     }
     private void forward(HttpServletRequest request, HttpServletResponse response, String path) throws IOException {

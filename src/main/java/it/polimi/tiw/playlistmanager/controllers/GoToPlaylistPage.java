@@ -89,7 +89,7 @@ public class GoToPlaylistPage extends HttpServlet {
         songs.sort((s1, s2) -> s2.getAlbumYear() - s1.getAlbumYear());
 
         // Get the first 5 songs
-        List<Song> trimmedSongList = songs.subList(0, Math.min(5, songs.size()));
+//        List<Song> trimmedSongList = songs.subList(0, Math.min(5, songs.size()));
 
         // Get songs not in the playlist
         List<Song> songsNotInPlaylist;
@@ -105,7 +105,7 @@ public class GoToPlaylistPage extends HttpServlet {
         session.setAttribute("playlist", playlist);
         session.setAttribute("playlistTitle", playlist.getTitle());
         session.setAttribute("songs", songs);
-        session.setAttribute("trimmedSongList", trimmedSongList);
+        session.setAttribute("trimmedSongList", songs);
         session.setAttribute("songIndex", songs.size());
         session.setAttribute("songsNotInPlaylist", songsNotInPlaylist);
         String playlistPath = "/WEB-INF/playlist.html";

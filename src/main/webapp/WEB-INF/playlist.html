@@ -8,10 +8,11 @@
 <body>
     <div class="home-title">Welcome back, <span th:text="${session.currentUser.name}">current user!</span></div>
     <div class="playlist">
+        <p>Current Page: <span th:text="${session.currentPage}"></span></p>
         <h2 th:text="${session.playlist.title}">Playlist Name</h2>
         <table>
             <tr>
-                <th th:each="song, stat : ${session.songs}" th:if="${stat.count <= 5}">
+                <th th:each="song, stat : ${session.trimmedSongList}" th:if="${stat.count <= 5}">
                     <img th:src="${song.coverPath}" alt="Album Cover">
                     <p th:text="${song.title}">Song Name</p>
                 </th>
