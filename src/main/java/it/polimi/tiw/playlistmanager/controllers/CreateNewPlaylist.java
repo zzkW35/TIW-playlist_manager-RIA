@@ -1,5 +1,6 @@
 package it.polimi.tiw.playlistmanager.controllers;
 
+import it.polimi.tiw.playlistmanager.beans.Playlist;
 import it.polimi.tiw.playlistmanager.beans.User;
 import it.polimi.tiw.playlistmanager.dao.BinderDAO;
 import it.polimi.tiw.playlistmanager.dao.PlaylistDAO;
@@ -11,12 +12,14 @@ import org.thymeleaf.context.WebContext;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  * Servlet implementation class AddSongToPlaylist
@@ -44,7 +47,6 @@ public class CreateNewPlaylist extends HttpServlet {
      * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
      */
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
         String playlistTitle;
         String[] songIds;
         User songUploader = (User) request.getSession().getAttribute("currentUser");
@@ -83,9 +85,19 @@ public class CreateNewPlaylist extends HttpServlet {
             }
         }
 
+        // Get user and its ordered playlists to refresh the homepage
+        User user = (User) request.getSession().getAttribute("currentUser");
+        List<Playlist> orderedUserPlaylists;
+        try {
+            orderedUserPlaylists = playlistDAO.findPlaylistsByUserIdOrderByCreationDateDesc(user.getId());
+        } catch (Exception e) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Error is: " + e.getMessage());
+            return;
+        }
+        HttpSession session = request.getSession();
+        session.setAttribute("orderedUserPlaylists", orderedUserPlaylists);
         String homePath = "/WEB-INF/home.html";
         forward(request, response, homePath);
-
     }
     private void forward(HttpServletRequest request, HttpServletResponse response, String path) throws IOException {
         ServletContext servletContext = getServletContext();
