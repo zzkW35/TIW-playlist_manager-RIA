@@ -26,10 +26,10 @@ import it.polimi.tiw.playlistmanager.dao.UserDAO;
 import it.polimi.tiw.playlistmanager.handlers.ThymeleafHandler;
 
 /**
- * Servlet implementation class Login
+ * Servlet implementation class GoToHomePage
  */
-@WebServlet("/Login")
-public class Login extends HttpServlet {
+@WebServlet("/GoToHomePage")
+public class GoToHomePage extends HttpServlet {
     @Serial
     private static final long serialVersionUID = 1L;
     private Connection connection = null;
@@ -39,7 +39,7 @@ public class Login extends HttpServlet {
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public Login() {
+    public GoToHomePage() {
         super();
     }
 
