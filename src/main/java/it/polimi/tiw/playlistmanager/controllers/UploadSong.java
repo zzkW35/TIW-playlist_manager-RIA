@@ -9,6 +9,7 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
 import java.io.IOException;
+import java.io.Serial;
 import java.sql.Connection;
 import java.util.List;
 import javax.servlet.ServletContext;
@@ -24,6 +25,7 @@ import javax.servlet.http.HttpSession;
  */
 @WebServlet("/UploadSong")
 public class UploadSong extends HttpServlet {
+	@Serial
 	private static final long serialVersionUID = 1L;
 	private Connection connection = null;
 	private TemplateEngine templateEngine;

@@ -5,6 +5,7 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
 import java.io.IOException;
+import java.io.Serial;
 import java.util.List;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -21,6 +22,7 @@ import static it.polimi.tiw.playlistmanager.handlers.ThymeleafHandler.handler;
  */
 @WebServlet("/BrowseSongs")
 public class BrowseSongs extends HttpServlet {
+	@Serial
 	private static final long serialVersionUID = 1L;
 	private TemplateEngine templateEngine;
     /**

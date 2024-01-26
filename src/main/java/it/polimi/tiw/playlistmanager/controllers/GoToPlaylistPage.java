@@ -1,6 +1,7 @@
 package it.polimi.tiw.playlistmanager.controllers;
 
 import java.io.IOException;
+import java.io.Serial;
 import java.sql.Connection;
 import java.util.List;
 import javax.servlet.ServletContext;
@@ -27,6 +28,7 @@ import static it.polimi.tiw.playlistmanager.handlers.ThymeleafHandler.handler;
  */
 @WebServlet("/GoToPlaylistPage")
 public class GoToPlaylistPage extends HttpServlet {
+    @Serial
     private static final long serialVersionUID = 1L;
     private Connection connection;
     private TemplateEngine templateEngine;

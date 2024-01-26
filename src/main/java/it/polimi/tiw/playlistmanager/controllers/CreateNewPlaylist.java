@@ -5,11 +5,13 @@ import it.polimi.tiw.playlistmanager.beans.User;
 import it.polimi.tiw.playlistmanager.dao.BinderDAO;
 import it.polimi.tiw.playlistmanager.dao.PlaylistDAO;
 import it.polimi.tiw.playlistmanager.handlers.ConnectionHandler;
+import it.polimi.tiw.playlistmanager.handlers.ConstructHandler;
 import it.polimi.tiw.playlistmanager.handlers.ThymeleafHandler;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
 import java.io.IOException;
+import java.io.Serial;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
@@ -26,6 +28,7 @@ import javax.servlet.http.HttpSession;
  */
 @WebServlet("/CreateNewPlaylist")
 public class CreateNewPlaylist extends HttpServlet {
+    @Serial
     private static final long serialVersionUID = 1L;
     private Connection connection = null;
     private TemplateEngine templateEngine;
@@ -72,17 +75,10 @@ public class CreateNewPlaylist extends HttpServlet {
 
         // Create the binder between the playlist and the songs
         BinderDAO binderDAO = new BinderDAO(connection);
-        for (String songIdStr : songIds) {
-            try {
-                int songId = Integer.parseInt(songIdStr);
-                binderDAO.createBinder(playlistID, songId);
-            } catch (NumberFormatException e) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid song ID: " + songIdStr);
-                return;
-            } catch (SQLException e) {
-                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database error: " + e.getMessage());
-                return;
-            }
+        try {
+            ConstructHandler.songListPlaylistBinder(binderDAO, response, songIds, playlistID);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
 
         // Get user and its ordered playlists to refresh the homepage
