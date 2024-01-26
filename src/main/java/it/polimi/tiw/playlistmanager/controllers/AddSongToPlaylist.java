@@ -65,7 +65,6 @@ public class AddSongToPlaylist extends HttpServlet {
             throw new RuntimeException(e);
         }
         String playlistIdString = Integer.toString(playlistID);
-        request.getSession().setAttribute("currentPage", 1);
         response.sendRedirect(getServletContext().getContextPath() + "/GoToPlaylistPage?playlistId=" + playlistIdString);
     }
 }

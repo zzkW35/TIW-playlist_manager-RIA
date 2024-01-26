@@ -59,9 +59,9 @@ public class BrowseSongs extends HttpServlet {
 			return;
 		}
 		if (direction.equals("next")) {
-			goToNextPage(request, numberOfPages);
+			goToNextPage(request, numberOfPages, songs);
 		} else if (direction.equals("previous")) {
-			goToPreviousPage(request);
+			goToPreviousPage(request, songs);
 		} else {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid direction");
 			return;
@@ -103,27 +103,23 @@ public class BrowseSongs extends HttpServlet {
 		return numberOfPages;
 	}
 
-	private void goToNextPage(HttpServletRequest request, int numberOfPages) throws IOException {
+	private void goToNextPage(HttpServletRequest request, int numberOfPages, List<Song> songs) throws IOException {
 		HttpSession session = request.getSession();
-		List<Song> songs = (List<Song>) session.getAttribute("songs");
 		int currentPage = getCurrentPage(request);
 		if (currentPage < numberOfPages) {
 			currentPage++;
 		}
-		System.out.println("number of pages: " + numberOfPages);
 		session.setAttribute("hasNextPage", currentPage < numberOfPages ? 1 : 0);
 		session.setAttribute("trimmedSongList", getCurrentPageSongs(songs, currentPage));
 		session.setAttribute("currentPage", currentPage);
 	}
 
-	private void goToPreviousPage(HttpServletRequest request) throws IOException {
+	private void goToPreviousPage(HttpServletRequest request, List<Song> songs) throws IOException {
 		HttpSession session = request.getSession();
-		List<Song> songs = (List<Song>) session.getAttribute("songs");
 		int currentPage = getCurrentPage(request);
 		if (currentPage > 1) {
 			currentPage--;
 		}
-		session.setAttribute("hasPreviousPage", currentPage > 1 ? 1 : 0);
 		session.setAttribute("hasNextPage", 1);
 		session.setAttribute("trimmedSongList", getCurrentPageSongs(songs, currentPage));
 		session.setAttribute("currentPage", currentPage);
