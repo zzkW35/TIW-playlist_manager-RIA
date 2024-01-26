@@ -13,6 +13,10 @@ h1 {
     margin-bottom: 50px;
 }
 
+h2 {
+    font-size: 2em;
+}
+
 form {
     margin-top: 20px;
 }

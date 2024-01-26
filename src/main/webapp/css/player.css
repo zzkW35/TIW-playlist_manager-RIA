@@ -1,0 +1,27 @@
+div {
+    width: 80%;
+    margin: auto;
+    text-align: center;
+}
+
+p {
+    font-size: 1.2em;
+}
+
+img {
+    width: 300px;
+    height: 300px;
+    object-fit: cover;
+}
+
+audio {
+    width: 100%;
+}
+
+.player {
+    width: 80%;
+    padding: 20px;
+    background-color: white;
+    box-shadow: 0 0 10px 0 rgba(0,0,0,0.1);
+    margin: 30px auto 20px;
+}

@@ -18,7 +18,9 @@
                 <tr>
                     <th th:each="song, stat : ${session.trimmedSongList}" th:if="${stat.count <= 5}">
                         <img th:src="${song.coverPath}" alt="Album Cover">
-                        <p th:text="${song.title}">Song Name</p>
+                        <a th:href="@{/GoToPlayerPage(songId=${song.id})}">
+                            <p th:text="${song.title}">Song Name</p>
+                        </a>
                     </th>
                 </tr>
             </table>
