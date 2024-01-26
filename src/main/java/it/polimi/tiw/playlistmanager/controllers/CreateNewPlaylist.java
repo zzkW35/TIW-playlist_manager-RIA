@@ -21,8 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import static it.polimi.tiw.playlistmanager.handlers.ThymeleafHandler.handler;
-import static it.polimi.tiw.playlistmanager.handlers.ThymeleafHandler.forward;
+import static it.polimi.tiw.playlistmanager.handlers.ThymeleafHandler.*;
 
 /**
  * Servlet implementation class CreateNewPlaylist
@@ -61,7 +60,8 @@ public class CreateNewPlaylist extends HttpServlet {
             playlistTitle = request.getParameter("playlistTitle");
             songIds = request.getParameterValues("songSelection");
         } catch (Exception e) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Incorrect or missing parameters, error is: " + e.getMessage());
+            String error = "Incorrect or missing parameters, error is: " + e.getMessage();
+            forwardToErrorPage(request, response, error, getServletContext(), templateEngine);
             return;
         }
 
@@ -70,7 +70,8 @@ public class CreateNewPlaylist extends HttpServlet {
         try {
             playlistID = playlistDAO.createPlaylist(playlistTitle, songUploaderId);
         } catch (Exception e) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Could not add song to playlist: " + e.getMessage());
+            String error = "Could not create playlist: " + e.getMessage();
+            forwardToErrorPage(request, response, error, getServletContext(), templateEngine);
             return;
         }
 
@@ -79,6 +80,7 @@ public class CreateNewPlaylist extends HttpServlet {
         try {
             ConstructHandler.songListPlaylistBinder(binderDAO, response, songIds, playlistID);
         } catch (SQLException e) {
+            forwardToErrorPage(request, response, e.getMessage(), getServletContext(), templateEngine);
             throw new RuntimeException(e);
         }
 
@@ -88,7 +90,8 @@ public class CreateNewPlaylist extends HttpServlet {
         try {
             orderedUserPlaylists = playlistDAO.findPlaylistsByUserIdOrderByCreationDateDesc(user.getId());
         } catch (Exception e) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Error is: " + e.getMessage());
+            String error = "Could not retrieve playlists: " + e.getMessage();
+            forwardToErrorPage(request, response, error, getServletContext(), templateEngine);
             return;
         }
         HttpSession session = request.getSession();

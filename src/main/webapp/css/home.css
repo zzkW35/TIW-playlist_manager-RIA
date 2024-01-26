@@ -13,6 +13,7 @@
 .playlists, .upload-song, .create-playlist {
     width: 80%;
     padding: 20px;
+    border: 1px solid #ccc;
     background-color: white;
     box-shadow: 0 0 10px 0 rgba(0,0,0,0.1);
     margin: 0 auto 20px;

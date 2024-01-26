@@ -3,7 +3,6 @@ package it.polimi.tiw.playlistmanager.controllers;
 import java.io.IOException;
 import java.io.Serial;
 import java.sql.Connection;
-import java.util.List;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -12,20 +11,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import it.polimi.tiw.playlistmanager.beans.Playlist;
 import it.polimi.tiw.playlistmanager.beans.Song;
-import it.polimi.tiw.playlistmanager.dao.PlaylistDAO;
 import it.polimi.tiw.playlistmanager.dao.SongDAO;
 import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.WebContext;
 
 import it.polimi.tiw.playlistmanager.handlers.ConnectionHandler;
-import it.polimi.tiw.playlistmanager.beans.User;
-import it.polimi.tiw.playlistmanager.dao.UserDAO;
 
 import it.polimi.tiw.playlistmanager.handlers.ThymeleafHandler;
 
-import static it.polimi.tiw.playlistmanager.handlers.ThymeleafHandler.forward;
+import static it.polimi.tiw.playlistmanager.handlers.ThymeleafHandler.*;
 
 /**
  * Servlet implementation class GoToPlayerPage
@@ -55,20 +49,23 @@ public class GoToPlayerPage extends HttpServlet {
      * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
      */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // Get songId and exctract the song from the database
+        // Get songId and extract the song from the database
         int songId;
         Song song;
         try {
             songId = Integer.parseInt(request.getParameter("songId"));
         } catch (Exception e) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Incorrect or missing parameters, error is: " + e.getMessage());
+//            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Incorrect or missing parameters, error is: " + e.getMessage());
+            String error = "Incorrect or missing song parameters, details: " + e.getMessage();
+            forwardToErrorPage(request, response, error, getServletContext(), templateEngine);
             return;
         }
         SongDAO songDAO = new SongDAO(connection);
         try {
             song = songDAO.findSongById(songId);
         } catch (Exception e) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Incorrect or missing parameters, error is: " + e.getMessage());
+            String error = "Incorrect or missing song parameters, details: " + e.getMessage();
+            forwardToErrorPage(request, response, error, getServletContext(), templateEngine);
             return;
         }
 

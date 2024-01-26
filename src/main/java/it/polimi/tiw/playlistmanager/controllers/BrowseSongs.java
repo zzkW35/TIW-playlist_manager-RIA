@@ -2,7 +2,6 @@ package it.polimi.tiw.playlistmanager.controllers;
 
 import it.polimi.tiw.playlistmanager.beans.Song;
 import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.WebContext;
 
 import java.io.IOException;
 import java.io.Serial;
@@ -15,8 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import static it.polimi.tiw.playlistmanager.handlers.ThymeleafHandler.handler;
-import static it.polimi.tiw.playlistmanager.handlers.ThymeleafHandler.forward;
+import static it.polimi.tiw.playlistmanager.handlers.ThymeleafHandler.*;
 
 /**
  * Servlet implementation class BrowseSongs
@@ -57,7 +55,7 @@ public class BrowseSongs extends HttpServlet {
 		// Check if the user wants to go to the next song or to the previous one
 		String direction = request.getParameter("direction");
 		if (direction == null || direction.isEmpty()) {
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing direction");
+			forwardToErrorPage(request, response, "Missing button direction", getServletContext(), templateEngine);
 			return;
 		}
 		if (direction.equals("next")) {
@@ -65,7 +63,7 @@ public class BrowseSongs extends HttpServlet {
 		} else if (direction.equals("previous")) {
 			goToPreviousPage(request, songs);
 		} else {
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid direction");
+			forwardToErrorPage(request, response, "Invalid direction", getServletContext(), templateEngine);
 			return;
 		}
 
@@ -126,10 +124,4 @@ public class BrowseSongs extends HttpServlet {
 		session.setAttribute("trimmedSongList", getCurrentPageSongs(songs, currentPage));
 		session.setAttribute("currentPage", currentPage);
 	}
-
-//	private void forward(HttpServletRequest request, HttpServletResponse response, String path) throws IOException {
-//		ServletContext servletContext = getServletContext();
-//		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
-//		templateEngine.process(path, ctx, response.getWriter());
-//	}
 }

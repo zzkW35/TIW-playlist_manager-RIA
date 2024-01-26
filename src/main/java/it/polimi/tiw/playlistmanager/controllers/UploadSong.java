@@ -4,9 +4,7 @@ import it.polimi.tiw.playlistmanager.beans.Song;
 import it.polimi.tiw.playlistmanager.beans.User;
 import it.polimi.tiw.playlistmanager.dao.SongDAO;
 import it.polimi.tiw.playlistmanager.handlers.ConnectionHandler;
-import it.polimi.tiw.playlistmanager.handlers.ThymeleafHandler;
 import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.WebContext;
 
 import java.io.IOException;
 import java.io.Serial;
@@ -20,7 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import static it.polimi.tiw.playlistmanager.handlers.ThymeleafHandler.forward;
+import static it.polimi.tiw.playlistmanager.handlers.ThymeleafHandler.*;
 
 /**
  * Servlet implementation class UploadSong
@@ -42,7 +40,7 @@ public class UploadSong extends HttpServlet {
 	public void init() throws ServletException {
 		connection = ConnectionHandler.getConnection(getServletContext());
 		ServletContext servletContext = getServletContext();
-		this.templateEngine = ThymeleafHandler.handler(servletContext);
+		this.templateEngine = handler(servletContext);
 	}
 
 	/**
@@ -69,12 +67,13 @@ public class UploadSong extends HttpServlet {
 			songGenre = request.getParameter("songGenre");
 			songFilePath = request.getParameter("songFilePath");
 		} catch (Exception e) {
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Incorrect or missing parameters, error is: " + e.getMessage());
-
+			String error = "Incorrect or missing parameters, details: " + e.getMessage();
+			forwardToErrorPage(request, response, error, getServletContext(), templateEngine);
 			return;
 		}
 		if (songAlbumYear < 0) {
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Year must be positive");
+			String error = "Year must be positive";
+			forwardToErrorPage(request, response, error, getServletContext(), templateEngine);
 		}
 
 		// Insert the song into the database
@@ -83,7 +82,8 @@ public class UploadSong extends HttpServlet {
 			songDAO.addSong(songTitle, songCoverPath, songAlbum, songArtist, songAlbumYear, songGenre, songFilePath,
 					songUploaderId);
 		} catch (Exception e) {
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Could not upload the song");
+			String error = "Could not upload the song, details: " + e.getMessage();
+			forwardToErrorPage(request, response, error, getServletContext(), templateEngine);
 			return;
 		}
 
@@ -93,7 +93,8 @@ public class UploadSong extends HttpServlet {
 		try {
 			userSongs = songDAO.findAllSongsByUserId(user.getId());
 		} catch (Exception e) {
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Error is: " + e.getMessage());
+			String error = "Could not retrieve songs, details: " + e.getMessage();
+			forwardToErrorPage(request, response, error, getServletContext(), templateEngine);
 			return;
 		}
 		HttpSession session = request.getSession();

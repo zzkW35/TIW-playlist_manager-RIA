@@ -22,8 +22,7 @@ import it.polimi.tiw.playlistmanager.handlers.ConnectionHandler;
 import it.polimi.tiw.playlistmanager.beans.User;
 import it.polimi.tiw.playlistmanager.dao.UserDAO;
 
-import static it.polimi.tiw.playlistmanager.handlers.ThymeleafHandler.handler;
-import static it.polimi.tiw.playlistmanager.handlers.ThymeleafHandler.forward;
+import static it.polimi.tiw.playlistmanager.handlers.ThymeleafHandler.*;
 
 /**
  * Servlet implementation class GoToHomePage
@@ -65,7 +64,8 @@ public class GoToHomePage extends HttpServlet {
 
         // Check parameters
         if (email == null || password == null || email.isEmpty() || password.isEmpty()) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing or incorrect parameters");
+            forwardToErrorPage(request, response, "Missing or incorrect login credentials",
+                    getServletContext(), templateEngine);
             return;
         }
 
@@ -75,7 +75,7 @@ public class GoToHomePage extends HttpServlet {
         try {
             user = userDAO.findUser(email, password);
         } catch (Exception e) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Error is: " + e.getMessage());
+            forwardToErrorPage(request, response, e.getMessage(), getServletContext(), templateEngine);
             return;
         }
 
@@ -85,7 +85,7 @@ public class GoToHomePage extends HttpServlet {
         try {
             orderedUserPlaylists = playlistDAO.findPlaylistsByUserIdOrderByCreationDateDesc(user.getId());
         } catch (Exception e) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Error is: " + e.getMessage());
+            forwardToErrorPage(request, response, e.getMessage(), getServletContext(), templateEngine);
             return;
         }
 
@@ -95,7 +95,7 @@ public class GoToHomePage extends HttpServlet {
         try {
             userSongs = songDAO.findAllSongsByUserId(user.getId());
         } catch (Exception e) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Error is: " + e.getMessage());
+            forwardToErrorPage(request, response, e.getMessage(), getServletContext(), templateEngine);
             return;
         }
 

@@ -18,12 +18,10 @@ import it.polimi.tiw.playlistmanager.beans.User;
 import it.polimi.tiw.playlistmanager.dao.BinderDAO;
 import it.polimi.tiw.playlistmanager.dao.PlaylistDAO;
 import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.WebContext;
 
 import it.polimi.tiw.playlistmanager.handlers.ConnectionHandler;
 
-import static it.polimi.tiw.playlistmanager.handlers.ThymeleafHandler.forward;
-import static it.polimi.tiw.playlistmanager.handlers.ThymeleafHandler.handler;
+import static it.polimi.tiw.playlistmanager.handlers.ThymeleafHandler.*;
 
 /**
  * Servlet implementation class GoToPlaylistPage
@@ -57,7 +55,8 @@ public class GoToPlaylistPage extends HttpServlet {
         String playlistIdString = request.getParameter("playlistId");
         User currentUser = (User) request.getSession().getAttribute("currentUser");
         if (playlistIdString == null || playlistIdString.isEmpty()) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing playlistId");
+            String error = "Missing playlistId";
+            forwardToErrorPage(request, response, error, getServletContext(), templateEngine);
             return;
         }
 
@@ -66,7 +65,8 @@ public class GoToPlaylistPage extends HttpServlet {
         try {
             playlistId = Integer.parseInt(playlistIdString);
         } catch (NumberFormatException e) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "PlaylistId is not an integer");
+            String error = "PlaylistId is not an integer";
+            forwardToErrorPage(request, response, error, getServletContext(), templateEngine);
             return;
         }
 
@@ -76,7 +76,8 @@ public class GoToPlaylistPage extends HttpServlet {
         try {
             playlist = playlistDAO.findPlaylistById(playlistId);
         } catch (Exception e) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "PlaylistId is not valid");
+            String error = "PlaylistId is not valid";
+            forwardToErrorPage(request, response, error, getServletContext(), templateEngine);
             return;
         }
 
@@ -86,7 +87,8 @@ public class GoToPlaylistPage extends HttpServlet {
         try {
             songs = binderDAO.findAllSongsByPlaylistId(playlistId);
         } catch (Exception e) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Something went wrong while retrieving the songs: " + e.getMessage());
+            String error = "Something went wrong while retrieving the songs, details: " + e.getMessage();
+            forwardToErrorPage(request, response, error, getServletContext(), templateEngine);
             return;
         }
         // Order songs by their albumYear
@@ -97,7 +99,8 @@ public class GoToPlaylistPage extends HttpServlet {
         try {
             songsNotInPlaylist = binderDAO.findAllSongsOfUserNotInPlaylist(playlistId, currentUser.getId());
         } catch (Exception e) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Something went wrong while retrieving the songs: " + e.getMessage());
+            String error = "Something went wrong while retrieving the songs, details: " + e.getMessage();
+            forwardToErrorPage(request, response, error, getServletContext(), templateEngine);
             return;
         }
 
