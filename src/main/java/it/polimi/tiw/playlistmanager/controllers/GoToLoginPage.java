@@ -14,6 +14,8 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
 import it.polimi.tiw.playlistmanager.handlers.ConnectionHandler;
+
+import static it.polimi.tiw.playlistmanager.handlers.ThymeleafHandler.forward;
 import static it.polimi.tiw.playlistmanager.handlers.ThymeleafHandler.handler;
 
 /**
@@ -46,11 +48,6 @@ public class GoToLoginPage extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// Redirect to the login page
 		String loginPage = "/WEB-INF/login.html";
-		forward(request, response, loginPage);
-	}
-	private void forward(HttpServletRequest request, HttpServletResponse response, String path) throws IOException {
-		ServletContext servletContext = getServletContext();
-		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
-		templateEngine.process(path, ctx, response.getWriter());
+		forward(request, response, loginPage, getServletContext(), templateEngine);
 	}
 }

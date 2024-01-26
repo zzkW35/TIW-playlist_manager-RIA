@@ -17,13 +17,13 @@ import it.polimi.tiw.playlistmanager.beans.Song;
 import it.polimi.tiw.playlistmanager.dao.PlaylistDAO;
 import it.polimi.tiw.playlistmanager.dao.SongDAO;
 import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.WebContext;
 
 import it.polimi.tiw.playlistmanager.handlers.ConnectionHandler;
 import it.polimi.tiw.playlistmanager.beans.User;
 import it.polimi.tiw.playlistmanager.dao.UserDAO;
 
-import it.polimi.tiw.playlistmanager.handlers.ThymeleafHandler;
+import static it.polimi.tiw.playlistmanager.handlers.ThymeleafHandler.handler;
+import static it.polimi.tiw.playlistmanager.handlers.ThymeleafHandler.forward;
 
 /**
  * Servlet implementation class GoToHomePage
@@ -46,7 +46,7 @@ public class GoToHomePage extends HttpServlet {
     public void init() throws ServletException {
         connection = ConnectionHandler.getConnection(getServletContext());
         ServletContext servletContext = getServletContext();
-        this.templateEngine = ThymeleafHandler.handler(servletContext);
+        this.templateEngine = handler(servletContext);
     }
 
     /**
@@ -107,12 +107,6 @@ public class GoToHomePage extends HttpServlet {
 
         // Redirect to the Home page
         String homePath = "/WEB-INF/home.html";
-        forward(request, response, homePath);
-    }
-
-    private void forward(HttpServletRequest request, HttpServletResponse response, String path) throws IOException {
-        ServletContext servletContext = getServletContext();
-        final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
-        templateEngine.process(path, ctx, response.getWriter());
+        forward(request, response, homePath, getServletContext(), templateEngine);
     }
 }

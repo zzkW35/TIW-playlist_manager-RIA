@@ -6,9 +6,7 @@ import it.polimi.tiw.playlistmanager.dao.BinderDAO;
 import it.polimi.tiw.playlistmanager.dao.PlaylistDAO;
 import it.polimi.tiw.playlistmanager.handlers.ConnectionHandler;
 import it.polimi.tiw.playlistmanager.handlers.ConstructHandler;
-import it.polimi.tiw.playlistmanager.handlers.ThymeleafHandler;
 import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.WebContext;
 
 import java.io.IOException;
 import java.io.Serial;
@@ -22,6 +20,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import static it.polimi.tiw.playlistmanager.handlers.ThymeleafHandler.handler;
+import static it.polimi.tiw.playlistmanager.handlers.ThymeleafHandler.forward;
 
 /**
  * Servlet implementation class CreateNewPlaylist
@@ -43,7 +44,7 @@ public class CreateNewPlaylist extends HttpServlet {
     public void init() throws ServletException {
         connection = ConnectionHandler.getConnection(getServletContext());
         ServletContext servletContext = getServletContext();
-        this.templateEngine = ThymeleafHandler.handler(servletContext);
+        this.templateEngine = handler(servletContext);
     }
 
     /**
@@ -93,11 +94,6 @@ public class CreateNewPlaylist extends HttpServlet {
         HttpSession session = request.getSession();
         session.setAttribute("orderedUserPlaylists", orderedUserPlaylists);
         String homePath = "/WEB-INF/home.html";
-        forward(request, response, homePath);
-    }
-    private void forward(HttpServletRequest request, HttpServletResponse response, String path) throws IOException {
-        ServletContext servletContext = getServletContext();
-        final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
-        templateEngine.process(path, ctx, response.getWriter());
+        forward(request, response, homePath, getServletContext(), templateEngine);
     }
 }

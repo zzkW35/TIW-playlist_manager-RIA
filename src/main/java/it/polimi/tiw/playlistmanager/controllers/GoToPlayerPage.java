@@ -25,6 +25,8 @@ import it.polimi.tiw.playlistmanager.dao.UserDAO;
 
 import it.polimi.tiw.playlistmanager.handlers.ThymeleafHandler;
 
+import static it.polimi.tiw.playlistmanager.handlers.ThymeleafHandler.forward;
+
 /**
  * Servlet implementation class GoToPlayerPage
  */
@@ -75,9 +77,8 @@ public class GoToPlayerPage extends HttpServlet {
         session.setAttribute("selectedSong", song);
 
         // Redirect to the player page
-        String path = "/WEB-INF/player.html";
-        forward(request, response, path);
-
+        String playerPath = "/WEB-INF/player.html";
+        forward(request, response, playerPath, getServletContext(), templateEngine);
     }
 
     /**
@@ -85,11 +86,5 @@ public class GoToPlayerPage extends HttpServlet {
      */
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-    }
-
-    private void forward(HttpServletRequest request, HttpServletResponse response, String path) throws IOException {
-        ServletContext servletContext = getServletContext();
-        final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
-        templateEngine.process(path, ctx, response.getWriter());
     }
 }

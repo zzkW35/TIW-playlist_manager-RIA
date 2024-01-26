@@ -21,6 +21,8 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
 import it.polimi.tiw.playlistmanager.handlers.ConnectionHandler;
+
+import static it.polimi.tiw.playlistmanager.handlers.ThymeleafHandler.forward;
 import static it.polimi.tiw.playlistmanager.handlers.ThymeleafHandler.handler;
 
 /**
@@ -116,12 +118,6 @@ public class GoToPlaylistPage extends HttpServlet {
         session.setAttribute("songIndex", songs.size());
         session.setAttribute("songsNotInPlaylist", songsNotInPlaylist);
         String playlistPath = "/WEB-INF/playlist.html";
-        forward(request, response, playlistPath);
-    }
-
-    private void forward(HttpServletRequest request, HttpServletResponse response, String path) throws IOException {
-        ServletContext servletContext = getServletContext();
-        final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
-        templateEngine.process(path, ctx, response.getWriter());
+        forward(request, response, playlistPath, getServletContext(), templateEngine);
     }
 }

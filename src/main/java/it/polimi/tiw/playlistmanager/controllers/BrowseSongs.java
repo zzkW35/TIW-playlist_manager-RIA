@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import static it.polimi.tiw.playlistmanager.handlers.ThymeleafHandler.handler;
+import static it.polimi.tiw.playlistmanager.handlers.ThymeleafHandler.forward;
 
 /**
  * Servlet implementation class BrowseSongs
@@ -25,6 +26,7 @@ public class BrowseSongs extends HttpServlet {
 	@Serial
 	private static final long serialVersionUID = 1L;
 	private TemplateEngine templateEngine;
+
     /**
      * @see HttpServlet#HttpServlet()
      */
@@ -68,7 +70,7 @@ public class BrowseSongs extends HttpServlet {
 		}
 
 		String playlistPath = "/WEB-INF/playlist.html";
-		forward(request, response, playlistPath);
+		forward(request, response, playlistPath, getServletContext(), templateEngine);
 	}
 
 	private static final int SONGS_PER_PAGE = 5;
@@ -125,9 +127,9 @@ public class BrowseSongs extends HttpServlet {
 		session.setAttribute("currentPage", currentPage);
 	}
 
-	private void forward(HttpServletRequest request, HttpServletResponse response, String path) throws IOException {
-		ServletContext servletContext = getServletContext();
-		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
-		templateEngine.process(path, ctx, response.getWriter());
-	}
+//	private void forward(HttpServletRequest request, HttpServletResponse response, String path) throws IOException {
+//		ServletContext servletContext = getServletContext();
+//		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
+//		templateEngine.process(path, ctx, response.getWriter());
+//	}
 }

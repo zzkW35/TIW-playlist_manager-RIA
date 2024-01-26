@@ -20,6 +20,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import static it.polimi.tiw.playlistmanager.handlers.ThymeleafHandler.forward;
+
 /**
  * Servlet implementation class UploadSong
  */
@@ -68,7 +70,11 @@ public class UploadSong extends HttpServlet {
 			songFilePath = request.getParameter("songFilePath");
 		} catch (Exception e) {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Incorrect or missing parameters, error is: " + e.getMessage());
+
 			return;
+		}
+		if (songAlbumYear < 0) {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Year must be positive");
 		}
 
 		// Insert the song into the database
@@ -93,11 +99,6 @@ public class UploadSong extends HttpServlet {
 		HttpSession session = request.getSession();
 		session.setAttribute("userSongs", userSongs);
 		String homePath = "/WEB-INF/home.html";
-		forward(request, response, homePath);
-	}
-	private void forward(HttpServletRequest request, HttpServletResponse response, String path) throws IOException {
-		ServletContext servletContext = getServletContext();
-		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
-		templateEngine.process(path, ctx, response.getWriter());
+		forward(request, response, homePath, getServletContext(), templateEngine);
 	}
 }
