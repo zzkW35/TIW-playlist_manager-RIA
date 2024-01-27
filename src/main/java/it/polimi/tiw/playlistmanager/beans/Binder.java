@@ -5,6 +5,8 @@ public class Binder {
     private int playlistId;
     private int songId;
 
+    private int songPosition;
+
     public int getId() {
         return id;
     }
@@ -27,5 +29,13 @@ public class Binder {
 
     public void setSongId(int songId) {
         this.songId = songId;
+    }
+
+    public int getPosition() {
+        return songPosition;
+    }
+
+    public void setPosition(int position) {
+        this.songPosition = position;
     }
 }

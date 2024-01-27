@@ -34,6 +34,7 @@ CREATE TABLE `binder` (
 	`id` int unsigned NOT NULL AUTO_INCREMENT,
 	`playlist_id` int unsigned NOT NULL,
 	`song_id` int unsigned NOT NULL,
+    `song_position` int unsigned NOT NULL,
 	PRIMARY KEY (`id`),
 	CONSTRAINT `binder_playlist_id_fk` FOREIGN KEY (`playlist_id`) REFERENCES `playlist` (`id`),
 	CONSTRAINT `binder_song_id_fk` FOREIGN KEY (`song_id`) REFERENCES `song` (`id`)

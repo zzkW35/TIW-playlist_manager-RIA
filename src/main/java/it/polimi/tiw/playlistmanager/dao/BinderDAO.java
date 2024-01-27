@@ -127,13 +127,14 @@ private Connection connection;
             // TODO: maybe throw a custom exception?
             throw new SQLException("A binder with the same playlistId and songId already exists.");
         }
-        String query = "INSERT INTO binder (playlist_id, song_id) VALUES (?, ?)";
+        String query = "INSERT INTO binder (playlist_id, song_id, song_position) VALUES (?, ?, ?)";
         PreparedStatement preparedStatement = null;
 
         try {
             preparedStatement = connection.prepareStatement(query);
             preparedStatement.setInt(1, playlistId);
             preparedStatement.setInt(2, songId);
+            preparedStatement.setInt(3, getLastSongPosition(playlistId) + 1);
             preparedStatement.executeUpdate();
         }
         catch (SQLException e) {
@@ -151,7 +152,12 @@ private Connection connection;
         }
     }
 
-    // Find all the songs, given the playlistId
+    /**
+     * This method finds all the songs of a playlist given its id
+     * @param playlistId the id of the playlist
+     * @return a list of songs of the playlist
+     * @throws SQLException if something goes wrong while searching for the songs
+     */
     public List<Song> findAllSongsByPlaylistId(int playlistId) throws SQLException {
         String query = "SELECT * FROM song INNER JOIN binder ON song.id = binder.song_id WHERE binder.playlist_id = ?";
         List<Song> songs;
@@ -202,6 +208,13 @@ private Connection connection;
         return songs;
     }
 
+    /**
+     * This method finds all the songs of a user that aren't in a playlist given its id
+     * @param playlistId the id of the playlist
+     * @param userId the id of the user who created the playlist
+     * @return a list of songs that aren't in the playlist
+     * @throws SQLException if something goes wrong while searching for the songs
+     */
     public List<Song> findAllSongsOfUserNotInPlaylist(int playlistId, int userId) throws SQLException {
         String query = "SELECT * FROM song WHERE uploader_id = ? AND id NOT IN (SELECT song_id FROM binder WHERE playlist_id = ?)";
         List<Song> songs;
@@ -251,6 +264,83 @@ private Connection connection;
             }
         }
         return songs;
+    }
+
+    /**
+     * This method returns the last song position of a playlist given its id
+     * @param playlistId the id of the playlist
+     * @return the last song position of the playlist
+     * @throws SQLException if something goes wrong while searching for the last song position
+     */
+    public int getLastSongPosition(int playlistId) throws SQLException {
+        String query = "SELECT MAX(song_position) FROM binder WHERE playlist_id = ?";
+        int lastSongPosition = 0;
+        ResultSet resultSet = null;
+        PreparedStatement preparedStatement = null;
+
+        try {
+            preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setInt(1, playlistId);
+            resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                lastSongPosition = resultSet.getInt("MAX(song_position)");
+            }
+        }
+        catch (SQLException e) {
+            throw new SQLException("Something went wrong while searching for the last song position: " + e.getMessage());
+        }
+        finally {
+            try {
+                if (resultSet != null) {
+                    resultSet.close();
+                }
+            }
+            catch (SQLException e) {
+                throw new SQLException("Something went wrong while closing resultSet: " + e.getMessage());
+            }
+            try {
+                if (preparedStatement != null) {
+                    preparedStatement.close();
+                }
+            }
+            catch (SQLException e) {
+                throw new SQLException("Something went wrong while closing preparedStatement: " + e.getMessage());
+            }
+        }
+        return lastSongPosition;
+    }
+
+    // Reorder the songs of a playlist from a JSON array
+    public void reorderSongs(int playlistId, String[] songIds) throws SQLException {
+        String query = "UPDATE binder SET song_position = ? WHERE playlist_id = ? AND song_id = ?";
+        PreparedStatement preparedStatement = null;
+
+        try {
+            preparedStatement = connection.prepareStatement(query);
+            for (int i = 0; i < songIds.length; i++) {
+                preparedStatement.setInt(1, i + 1);
+                preparedStatement.setInt(2, playlistId);
+                preparedStatement.setInt(3, Integer.parseInt(songIds[i]));
+                preparedStatement.executeUpdate();
+            }
+        }
+        catch (SQLException e) {
+            throw new SQLException("Something went wrong while reordering the songs: " + e.getMessage());
+        }
+        catch (NumberFormatException e) {
+            throw new SQLException("Something went wrong while reordering the songs: " + e.getMessage());
+        }
+        finally {
+            try {
+                if (preparedStatement != null) {
+                    preparedStatement.close();
+                }
+            }
+            catch (SQLException e) {
+                throw new SQLException("Something went wrong while closing preparedStatement: " + e.getMessage());
+            }
+        }
     }
 
 }
