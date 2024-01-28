@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.Serial;
 import java.sql.Connection;
 import java.util.List;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -12,17 +11,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.google.gson.Gson;
 import it.polimi.tiw.playlistmanager.beans.Playlist;
 import it.polimi.tiw.playlistmanager.beans.Song;
+import it.polimi.tiw.playlistmanager.beans.UserData;
 import it.polimi.tiw.playlistmanager.dao.PlaylistDAO;
 import it.polimi.tiw.playlistmanager.dao.SongDAO;
-import org.thymeleaf.TemplateEngine;
 
 import it.polimi.tiw.playlistmanager.handlers.ConnectionHandler;
 import it.polimi.tiw.playlistmanager.beans.User;
 import it.polimi.tiw.playlistmanager.dao.UserDAO;
 
-import static it.polimi.tiw.playlistmanager.handlers.ThymeleafHandler.*;
 
 /**
  * Servlet implementation class GoToHomePage
@@ -32,7 +31,6 @@ public class GoToHomePage extends HttpServlet {
     @Serial
     private static final long serialVersionUID = 1L;
     private Connection connection = null;
-    private TemplateEngine templateEngine;
 
 
     /**
@@ -44,8 +42,6 @@ public class GoToHomePage extends HttpServlet {
 
     public void init() throws ServletException {
         connection = ConnectionHandler.getConnection(getServletContext());
-        ServletContext servletContext = getServletContext();
-        this.templateEngine = handler(servletContext);
     }
 
     /**
@@ -66,9 +62,10 @@ public class GoToHomePage extends HttpServlet {
 
         // Check parameters
         boolean isLogged = session.getAttribute("currentUser") != null;
-        if ((email == null || password == null || email.isEmpty() || password.isEmpty()) && !isLogged) {
+            if ((email == null || password == null || email.isEmpty() || password.isEmpty()) && !isLogged) {
             String error = "Missing login credentials";
-            forwardToErrorPage(request, response, error, getServletContext(), templateEngine);
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().println(error);
             return;
         }
 
@@ -78,7 +75,8 @@ public class GoToHomePage extends HttpServlet {
         try {
             user = userDAO.findUser(email, password);
         } catch (Exception e) {
-            forwardToErrorPage(request, response, e.getMessage(), getServletContext(), templateEngine);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().println(e.getMessage());
             return;
         }
 
@@ -88,7 +86,8 @@ public class GoToHomePage extends HttpServlet {
         try {
             orderedUserPlaylists = playlistDAO.findPlaylistsByUserIdOrderByCreationDateDesc(user.getId());
         } catch (Exception e) {
-            forwardToErrorPage(request, response, e.getMessage(), getServletContext(), templateEngine);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().println(e.getMessage());
             return;
         }
 
@@ -98,17 +97,16 @@ public class GoToHomePage extends HttpServlet {
         try {
             userSongs = songDAO.findAllSongsByUserId(user.getId());
         } catch (Exception e) {
-            forwardToErrorPage(request, response, e.getMessage(), getServletContext(), templateEngine);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().println(e.getMessage());
             return;
         }
 
-        // Save user, their playlists and their songs in the session
-        session.setAttribute("currentUser", user);
-        session.setAttribute("orderedUserPlaylists", orderedUserPlaylists);
-        session.setAttribute("userSongs", userSongs);
-
-        // Redirect to the Home page
-        String homePath = "/WEB-INF/home.html";
-        forward(request, response, homePath, getServletContext(), templateEngine);
+        // Send user, their playlists and their songs to the client
+        String userInfo = new Gson().toJson(new UserData(user, orderedUserPlaylists, userSongs));
+        response.setStatus(HttpServletResponse.SC_OK);
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write(userInfo);
     }
 }
