@@ -55,7 +55,6 @@ public class GoToPlayerPage extends HttpServlet {
         try {
             songId = Integer.parseInt(request.getParameter("songId"));
         } catch (Exception e) {
-//            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Incorrect or missing parameters, error is: " + e.getMessage());
             String error = "Incorrect or missing song parameters, details: " + e.getMessage();
             forwardToErrorPage(request, response, error, getServletContext(), templateEngine);
             return;

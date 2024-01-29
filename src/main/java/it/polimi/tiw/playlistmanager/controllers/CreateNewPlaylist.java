@@ -54,7 +54,7 @@ public class CreateNewPlaylist extends HttpServlet {
         String[] songIds;
         User songUploader = (User) request.getSession().getAttribute("currentUser");
         int songUploaderId = songUploader.getId();
-        int playlistID;
+        int playlistId;
 
         try {
             playlistTitle = request.getParameter("playlistTitle");
@@ -68,7 +68,7 @@ public class CreateNewPlaylist extends HttpServlet {
         // Insert the playlist into the database
         PlaylistDAO playlistDAO = new PlaylistDAO(connection);
         try {
-            playlistID = playlistDAO.createPlaylist(playlistTitle, songUploaderId);
+            playlistId = playlistDAO.createPlaylist(playlistTitle, songUploaderId);
         } catch (Exception e) {
             String error = "Could not create playlist: " + e.getMessage();
             forwardToErrorPage(request, response, error, getServletContext(), templateEngine);
@@ -78,17 +78,16 @@ public class CreateNewPlaylist extends HttpServlet {
         // Create the binder between the playlist and the songs
         BinderDAO binderDAO = new BinderDAO(connection);
         try {
-            ConstructHandler.songListPlaylistBinder(binderDAO, response, songIds, playlistID);
+            ConstructHandler.songListPlaylistBinder(binderDAO, response, songIds, playlistId);
         } catch (SQLException e) {
             forwardToErrorPage(request, response, e.getMessage(), getServletContext(), templateEngine);
             throw new RuntimeException(e);
         }
 
-        // Get user and its ordered playlists to refresh the homepage
-        User user = (User) request.getSession().getAttribute("currentUser");
+        // Get user's ordered playlists to refresh the homepage
         List<Playlist> orderedUserPlaylists;
         try {
-            orderedUserPlaylists = playlistDAO.findPlaylistsByUserIdOrderByCreationDateDesc(user.getId());
+            orderedUserPlaylists = playlistDAO.findPlaylistsByUserIdOrderByCreationDateDesc(songUploaderId);
         } catch (Exception e) {
             String error = "Could not retrieve playlists: " + e.getMessage();
             forwardToErrorPage(request, response, error, getServletContext(), templateEngine);

@@ -88,10 +88,9 @@ public class UploadSong extends HttpServlet {
 		}
 
 		// Get the songs of the user from the database
-		User user = (User) request.getSession().getAttribute("currentUser");
 		List<Song> userSongs;
 		try {
-			userSongs = songDAO.findAllSongsByUserId(user.getId());
+			userSongs = songDAO.findAllSongsByUserId(songUploaderId);
 		} catch (Exception e) {
 			String error = "Could not retrieve songs, details: " + e.getMessage();
 			forwardToErrorPage(request, response, error, getServletContext(), templateEngine);

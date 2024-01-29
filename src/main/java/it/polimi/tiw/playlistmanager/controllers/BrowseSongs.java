@@ -45,7 +45,8 @@ public class BrowseSongs extends HttpServlet {
 		HttpSession session = request.getSession();
 		List<Song> songs = (List<Song>) session.getAttribute("songs");
 		if (songs == null) {
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing songs");
+			String error = "Missing songs";
+			forwardToErrorPage(request, response, error, getServletContext(), templateEngine);
 			return;
 		}
 

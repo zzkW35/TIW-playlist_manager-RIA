@@ -64,7 +64,7 @@ public class GoToHomePage extends HttpServlet {
 
         // Check parameters
         if (email == null || password == null || email.isEmpty() || password.isEmpty()) {
-            String error = "Missing or incorrect login credentials";
+            String error = "Missing login credentials";
             forwardToErrorPage(request, response, error, getServletContext(), templateEngine);
             return;
         }
