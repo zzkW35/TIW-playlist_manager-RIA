@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+    <link rel="stylesheet" type="text/css" href="css/styles.css">
+    <link rel="stylesheet" type="text/css" href="css/home.css">
+    <script src="js/utils.js" defer></script>
+    <script src="js/home.js" defer></script>
+    <title>Home page</title>
+</head>
+<body>
+<!--    <form method="get" th:action="@{/GoToLoginPage}" class="logout-button">-->
+<!--        <input type="submit" value="Logout">-->
+<!--    </form>-->
+    <div class="home-title">Welcome back, <span id="userName">current user!</span>
+    </div>
+
+<!--    <div class="playlists">-->
+<!--        <h2>Your Playlists:</h2>-->
+<!--        <div th:if="${#lists.isEmpty(session.orderedUserPlaylists)}" class="playlist-card">-->
+<!--            <div class="playlist-title">No playlists available</div>-->
+<!--        </div>-->
+<!--        <a th:each="playlist : ${session.orderedUserPlaylists}" th:href="@{/GoToPlaylistPage(playlistId=${playlist.id})}" class="playlist-card">-->
+<!--            <div class="playlist-title" th:text="${playlist.title}"></div>-->
+<!--            <div class="playlist-date" th:text="${#dates.format(playlist.creationDate, 'dd/MM/yyyy')}"></div>-->
+<!--        </a>-->
+<!--    </div>-->
+<!--    <div class="upload-song">-->
+<!--        <h2>Upload a New Song:</h2>-->
+<!--        <form method="post" th:action="@{/UploadSong}">-->
+<!--            <label for="songTitle">Song Title:</label><br>-->
+<!--            <input type="text" id="songTitle" name="songTitle" required><br>-->
+<!--            <label for="songArtist">Song Artist:</label><br>-->
+<!--            <input type="text" id="songArtist" name="songArtist" required><br>-->
+<!--            <label for="songAlbum">Song Album:</label><br>-->
+<!--            <input type="text" id="songAlbum" name="songAlbum"><br>-->
+<!--            <label for="songAlbumYear">Album Year:</label><br>-->
+<!--            <input type="number" id="songAlbumYear" name="songAlbumYear" min="1900" max="2099" required><br>-->
+<!--            <label for="songGenre">Song Genre:</label><br>-->
+<!--            <input type="text" id="songGenre" name="songGenre" required><br>-->
+<!--            <label for="songCoverPath">Album File:</label><br>-->
+<!--            <input type="text" id="songCoverPath" name="songCoverPath" required><br>-->
+<!--            <label for="songFilePath">Song File:</label><br>-->
+<!--            <input type="text" id="songFilePath" name="songFilePath" required><br>-->
+<!--            <input type="submit" value="Upload Song">-->
+<!--        </form>-->
+<!--    </div>-->
+<!--    <div class="create-playlist">-->
+<!--        <h2>Create a New Playlist:</h2>-->
+<!--        <form method="post" th:action="@{/CreateNewPlaylist}">-->
+<!--            <label for="playlistTitle">Playlist Name:</label><br>-->
+<!--            <input type="text" id="playlistTitle" name="playlistTitle" required><br>-->
+<!--            <label for="songSelection">Select Songs:</label><br>-->
+<!--            <select id="songSelection" name="songSelection" multiple required>-->
+<!--                <option th:if="${#lists.isEmpty(session.userSongs)}" disabled>No songs available</option>-->
+<!--                <option th:each="song : ${session.userSongs}" th:value="${song.id}" th:text="${song.title}"></option>-->
+<!--            </select><br>-->
+<!--            <input type="submit" value="Create Playlist">-->
+<!--        </form>-->
+<!--    </div>-->
+</body>
+</html>

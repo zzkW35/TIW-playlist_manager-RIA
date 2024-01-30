@@ -19,13 +19,13 @@
                     sessionStorage.setItem('userName', responseData.userName);
                     sessionStorage.setItem('playlists', JSON.stringify(responseData.playlists));
                     sessionStorage.setItem('songs', JSON.stringify(responseData.songs));
-                    // window.location.href = '/PlaylistManager_war/home.html';
-                } else {
-                    // Login failed
-                    let errorMessage = document.querySelector('.error-message');
-                    errorMessage.textContent = message;
-                    errorMessage.classList.remove('hidden');
-                }
+                    window.location.href = 'home.html';
+                } //else {
+                //     // Login failed
+                //     let errorMessage = document.querySelector('.error-message');
+                //     errorMessage.textContent = message;
+                //     errorMessage.classList.remove('hidden');
+                // }
 
             }
         });

@@ -19,25 +19,26 @@
 		<param-name>dbDriver</param-name>
 		<param-value>com.mysql.cj.jdbc.Driver</param-value>
 	</context-param>
-	<filter>
-		<filter-name>LoggedUser</filter-name>
-		<filter-class>it.polimi.tiw.playlistmanager.filters.LoggedUser</filter-class>
-	</filter>
-	<filter>
-		<filter-name>NotLoggedUser</filter-name>
-		<filter-class>it.polimi.tiw.playlistmanager.filters.NotLoggedUser</filter-class>
-	</filter>
-	<filter-mapping>
-		<filter-name>LoggedUser</filter-name>
-		<url-pattern>/GoToPlaylistPage</url-pattern>
-		<url-pattern>/GoToPlayerPage</url-pattern>
-	</filter-mapping>
-	<filter-mapping>
-		<filter-name>NotLoggedUser</filter-name>
-		<url-pattern>/</url-pattern>
-		<url-pattern>/GoToHomePage</url-pattern>
-	</filter-mapping>
+<!--	<filter>-->
+<!--		<filter-name>LoggedUser</filter-name>-->
+<!--		<filter-class>it.polimi.tiw.playlistmanager.filters.LoggedUser</filter-class>-->
+<!--	</filter>-->
+<!--	<filter>-->
+<!--		<filter-name>NotLoggedUser</filter-name>-->
+<!--		<filter-class>it.polimi.tiw.playlistmanager.filters.NotLoggedUser</filter-class>-->
+<!--	</filter>-->
+<!--	<filter-mapping>-->
+<!--		<filter-name>LoggedUser</filter-name>-->
+<!--		<url-pattern>/GoToPlaylistPage</url-pattern>-->
+<!--		<url-pattern>/GoToPlayerPage</url-pattern>-->
+<!--	</filter-mapping>-->
+<!--	<filter-mapping>-->
+<!--		<filter-name>NotLoggedUser</filter-name>-->
+<!--		<url-pattern>/</url-pattern>-->
+<!--		<url-pattern>/GoToHomePage</url-pattern>-->
+<!--	</filter-mapping>-->
+
 	<welcome-file-list>
-		<welcome-file>GoToLoginPage</welcome-file>
+		<welcome-file>login.html</welcome-file>
 	</welcome-file-list>
 </web-app>
