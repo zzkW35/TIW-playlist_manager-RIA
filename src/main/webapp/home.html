@@ -15,16 +15,16 @@
     <div class="home-title">Welcome back, <span id="userName">current user!</span>
     </div>
 
-<!--    <div class="playlists">-->
-<!--        <h2>Your Playlists:</h2>-->
+    <div class="playlists" id="playlists">
+        <h2>Your Playlists:</h2>
 <!--        <div th:if="${#lists.isEmpty(session.orderedUserPlaylists)}" class="playlist-card">-->
 <!--            <div class="playlist-title">No playlists available</div>-->
 <!--        </div>-->
-<!--        <a th:each="playlist : ${session.orderedUserPlaylists}" th:href="@{/GoToPlaylistPage(playlistId=${playlist.id})}" class="playlist-card">-->
-<!--            <div class="playlist-title" th:text="${playlist.title}"></div>-->
-<!--            <div class="playlist-date" th:text="${#dates.format(playlist.creationDate, 'dd/MM/yyyy')}"></div>-->
-<!--        </a>-->
-<!--    </div>-->
+        <a class="playlist-card">
+            <div class="playlist-title" id="playlist-title"></div>
+            <div class="playlist-date" id="playlist-date"></div>
+        </a>
+    </div>
 <!--    <div class="upload-song">-->
 <!--        <h2>Upload a New Song:</h2>-->
 <!--        <form method="post" th:action="@{/UploadSong}">-->
