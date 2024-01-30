@@ -44,6 +44,9 @@ public class GoToLoginPage extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// Clean all the session attributes
+		request.getSession().invalidate();
+
 		// Redirect to the login page
 		String loginPage = "/WEB-INF/login.html";
 		forward(request, response, loginPage, getServletContext(), templateEngine);

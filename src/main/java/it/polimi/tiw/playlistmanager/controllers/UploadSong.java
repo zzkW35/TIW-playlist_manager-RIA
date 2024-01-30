@@ -74,6 +74,15 @@ public class UploadSong extends HttpServlet {
 		if (songAlbumYear < 0) {
 			String error = "Year must be positive";
 			forwardToErrorPage(request, response, error, getServletContext(), templateEngine);
+			return;
+		}
+		// Check parameters
+		if (songTitle == null || songTitle.isEmpty() || songCoverPath == null || songCoverPath.isEmpty() ||
+				songAlbum == null || songAlbum.isEmpty() || songArtist == null || songArtist.isEmpty() ||
+				songGenre == null || songGenre.isEmpty() || songFilePath == null || songFilePath.isEmpty()) {
+			String error = "Incorrect or missing parameters";
+			forwardToErrorPage(request, response, error, getServletContext(), templateEngine);
+			return;
 		}
 
 		// Insert the song into the database

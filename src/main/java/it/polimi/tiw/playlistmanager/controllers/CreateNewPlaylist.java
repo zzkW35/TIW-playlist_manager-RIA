@@ -59,6 +59,9 @@ public class CreateNewPlaylist extends HttpServlet {
         try {
             playlistTitle = request.getParameter("playlistTitle");
             songIds = request.getParameterValues("songSelection");
+            if (playlistTitle == null || playlistTitle.isEmpty() || songIds == null || songIds.length == 0) {
+                throw new Exception("Missing or incorrect parameters");
+            }
         } catch (Exception e) {
             String error = "Incorrect or missing parameters, error is: " + e.getMessage();
             forwardToErrorPage(request, response, error, getServletContext(), templateEngine);
@@ -79,9 +82,10 @@ public class CreateNewPlaylist extends HttpServlet {
         BinderDAO binderDAO = new BinderDAO(connection);
         try {
             ConstructHandler.songListPlaylistBinder(binderDAO, response, songIds, playlistId);
-        } catch (SQLException e) {
-            forwardToErrorPage(request, response, e.getMessage(), getServletContext(), templateEngine);
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            String error = "Could not create playlist: " + e.getMessage();
+            forwardToErrorPage(request, response, error, getServletContext(), templateEngine);
+            return;
         }
 
         // Get user's ordered playlists to refresh the homepage

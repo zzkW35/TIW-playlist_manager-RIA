@@ -64,9 +64,10 @@ public class AddSongToPlaylist extends HttpServlet {
         BinderDAO binderDAO = new BinderDAO(connection);
         try {
             ConstructHandler.songListPlaylistBinder(binderDAO, response, songIds, playlistID);
-        } catch (SQLException e) {
-            forwardToErrorPage(request, response, e.getMessage(), getServletContext(), templateEngine);
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            String error = "Error in creating the binder, error is: " + e.getMessage();
+            forwardToErrorPage(request, response, error, getServletContext(), templateEngine);
+            return;
         }
         String playlistIdString = Integer.toString(playlistID);
         response.sendRedirect(getServletContext().getContextPath() + "/GoToPlaylistPage?playlistId=" + playlistIdString);

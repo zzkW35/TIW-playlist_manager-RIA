@@ -7,6 +7,9 @@
     <title>Player Page</title>
 </head>
 <body>
+    <form method="get" th:action="@{/GoToLoginPage}" class="logout-button">
+        <input type="submit" value="Logout">
+    </form>
     <div class="player">
         <h2 th:text="${session.selectedSong.title}">Song Title</h2>
         <p th:text="${session.selectedSong.artist}">Artist Name</p>

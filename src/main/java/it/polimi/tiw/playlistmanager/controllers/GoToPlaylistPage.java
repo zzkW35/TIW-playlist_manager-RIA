@@ -104,6 +104,12 @@ public class GoToPlaylistPage extends HttpServlet {
             return;
         }
 
+        if (playlist == null) {
+            String error = "Playlist not found";
+            forwardToErrorPage(request, response, error, getServletContext(), templateEngine);
+            return;
+        }
+
         // Set the parameters for the pagination
         if (songs.size() > 5) {
             request.getSession().setAttribute("hasNextPage", 1);

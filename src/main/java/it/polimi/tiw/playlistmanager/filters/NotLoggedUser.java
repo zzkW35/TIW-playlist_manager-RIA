@@ -52,7 +52,6 @@ public class NotLoggedUser implements Filter {
                 return;
             }
         }
-
         chain.doFilter(request, response);
     }
 

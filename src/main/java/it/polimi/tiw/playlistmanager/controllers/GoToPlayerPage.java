@@ -62,6 +62,11 @@ public class GoToPlayerPage extends HttpServlet {
         SongDAO songDAO = new SongDAO(connection);
         try {
             song = songDAO.findSongById(songId);
+            if (song == null) {
+                String error = "Song not found";
+                forwardToErrorPage(request, response, error, getServletContext(), templateEngine);
+                return;
+            }
         } catch (Exception e) {
             String error = "Incorrect or missing song parameters, details: " + e.getMessage();
             forwardToErrorPage(request, response, error, getServletContext(), templateEngine);
