@@ -49,21 +49,17 @@ public class GoToHomePage extends HttpServlet {
     }
 
     /**
-     * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-     */
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        doPost(request, response);
-    }
-
-    /**
      * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
      */
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String email = request.getParameter("email");
         String password = request.getParameter("password");
 
+        HttpSession session = request.getSession();
+
         // Check parameters
-        if (email == null || password == null || email.isEmpty() || password.isEmpty()) {
+        boolean isLogged = session.getAttribute("currentUser") != null;
+        if ((email == null || password == null || email.isEmpty() || password.isEmpty()) && !isLogged) {
             String error = "Missing login credentials";
             forwardToErrorPage(request, response, error, getServletContext(), templateEngine);
             return;
@@ -100,7 +96,6 @@ public class GoToHomePage extends HttpServlet {
         }
 
         // Save user, their playlists and their songs in the session
-        HttpSession session = request.getSession();
         session.setAttribute("currentUser", user);
         session.setAttribute("orderedUserPlaylists", orderedUserPlaylists);
         session.setAttribute("userSongs", userSongs);

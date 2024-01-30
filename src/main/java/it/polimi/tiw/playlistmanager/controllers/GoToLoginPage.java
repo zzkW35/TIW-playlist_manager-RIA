@@ -25,7 +25,6 @@ import static it.polimi.tiw.playlistmanager.handlers.ThymeleafHandler.handler;
 public class GoToLoginPage extends HttpServlet {
 	@Serial
 	private static final long serialVersionUID = 1L;
-	private Connection connection;
 	private TemplateEngine templateEngine;
 
 
@@ -37,7 +36,6 @@ public class GoToLoginPage extends HttpServlet {
     }
 
 	public void init() throws ServletException {
-		connection = ConnectionHandler.getConnection(getServletContext());
 		ServletContext servletContext = getServletContext();
 		this.templateEngine = handler(servletContext);
 	}

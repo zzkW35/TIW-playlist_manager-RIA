@@ -35,6 +35,5 @@ public class ThymeleafHandler {
         session.setAttribute("errorInfo", error);
         System.out.println(error);
         forward(request, response, "/WEB-INF/error.html", servletContext, templateEngine);
-        return;
     }
 }
