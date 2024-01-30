@@ -25,8 +25,8 @@ import it.polimi.tiw.playlistmanager.dao.UserDAO;
 /**
  * Servlet implementation class GoToHomePage
  */
-@WebServlet("/GoToHomePage")
-public class GoToHomePage extends HttpServlet {
+@WebServlet("/Login")
+public class Login extends HttpServlet {
     @Serial
     private static final long serialVersionUID = 1L;
     private Connection connection = null;
@@ -35,7 +35,7 @@ public class GoToHomePage extends HttpServlet {
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public GoToHomePage() {
+    public Login() {
         super();
     }
 
