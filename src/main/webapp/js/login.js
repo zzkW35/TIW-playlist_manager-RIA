@@ -1,6 +1,6 @@
 (function() {
     // Get the login form
-    let loginForm = document.querySelector('.login-form');
+    let loginForm = document.getElementById('login-form')
 
     // Attach event listener to the form's submit event
     loginForm.addEventListener('submit', function(event) {

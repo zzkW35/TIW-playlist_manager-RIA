@@ -25,11 +25,11 @@
             <div class="playlist-date" id="playlist-date"></div>
         </a>
     </div>
-<!--    <div class="upload-song">-->
-<!--        <h2>Upload a New Song:</h2>-->
-<!--        <form method="post" th:action="@{/UploadSong}">-->
-<!--            <label for="songTitle">Song Title:</label><br>-->
-<!--            <input type="text" id="songTitle" name="songTitle" required><br>-->
+    <div class="upload-song">
+        <h2>Upload a New Song:</h2>
+        <form id="upload-song-form">
+            <label for="songTitle">Song Title:</label><br>
+            <input type="text" id="songTitle" name="songTitle" required><br>
 <!--            <label for="songArtist">Song Artist:</label><br>-->
 <!--            <input type="text" id="songArtist" name="songArtist" required><br>-->
 <!--            <label for="songAlbum">Song Album:</label><br>-->
@@ -42,9 +42,9 @@
 <!--            <input type="text" id="songCoverPath" name="songCoverPath" required><br>-->
 <!--            <label for="songFilePath">Song File:</label><br>-->
 <!--            <input type="text" id="songFilePath" name="songFilePath" required><br>-->
-<!--            <input type="submit" value="Upload Song">-->
-<!--        </form>-->
-<!--    </div>-->
+            <input type="submit" value="Upload Song">
+        </form>
+    </div>
 <!--    <div class="create-playlist">-->
 <!--        <h2>Create a New Playlist:</h2>-->
 <!--        <form method="post" th:action="@{/CreateNewPlaylist}">-->

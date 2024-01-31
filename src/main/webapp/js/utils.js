@@ -8,6 +8,22 @@ function makeCall(method, url, formElement, callback, reset = true) {
         callback(req);
     };
     req.open(method, url);
+    if (formElement === null) {
+        req.send();
+    } else {
+        req.send(new FormData(formElement));
+    }
+    if (formElement !== null && reset === true) {
+        formElement.reset();
+    }
+}
+
+function makeFormCall(method, url, formElement, callback, reset = true) {
+    let req = new XMLHttpRequest();
+    req.onreadystatechange = function() {
+        callback(req);
+    };
+    req.open(method, url);
     if (formElement == null) {
         req.send();
     } else {
