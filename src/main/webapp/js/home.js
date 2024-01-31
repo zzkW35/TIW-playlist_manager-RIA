@@ -226,24 +226,29 @@
 
                     let songTable = document.querySelector('.songTable');
 
+                    let songRow = document.createElement('tr');
+                    let count = 0;
+
                     songsRes.forEach(song => {
-                        let songRow = document.createElement('tr');
+                        if (count < 5) {
+                            let songCell = document.createElement('td');
+                            songRow.appendChild(songCell);
 
-                        let songCell = document.createElement('td');
-                        songRow.appendChild(songCell);
+                            let songCoverDiv = document.createElement('div');
+                            let songCoverImage = document.createElement('img');
+                            songCoverImage.src = song.coverPath;
+                            songCoverDiv.appendChild(songCoverImage);
+                            songCell.appendChild(songCoverDiv);
 
-                        let songCoverDiv = document.createElement('div');
-                        let songCoverImage = document.createElement('img');
-                        songCoverImage.src = song.coverPath;
-                        songCoverDiv.appendChild(songCoverImage);
-                        songCell.appendChild(songCoverDiv);
+                            let songTitleDiv = document.createElement('div');
+                            songTitleDiv.textContent = song.title;
+                            songCell.appendChild(songTitleDiv);
 
-                        let songTitleDiv = document.createElement('div');
-                        songTitleDiv.textContent = song.title;
-                        songCell.appendChild(songTitleDiv);
-
-                        songTable.appendChild(songRow);
+                            count++;
+                        }
                     });
+
+                    songTable.appendChild(songRow);
 
 
                 }
