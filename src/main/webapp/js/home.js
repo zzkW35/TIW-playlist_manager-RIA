@@ -220,7 +220,31 @@
                     console.log("Playlist created");
                     let responseData = JSON.parse(req.responseText);
                     console.log(responseData);
-                    sessionStorage.setItem('songs', JSON.stringify(responseData.songs));
+                    let songsRes = responseData.songs;
+                    sessionStorage.setItem('songs', JSON.stringify(songsRes));
+                    document.getElementById('playlist-name').textContent = songsRes.playlistTitle;
+
+                    let songTable = document.querySelector('.songTable');
+
+                    songsRes.forEach(song => {
+                        let songRow = document.createElement('tr');
+
+                        let songCell = document.createElement('td');
+                        songRow.appendChild(songCell);
+
+                        let songCoverDiv = document.createElement('div');
+                        let songCoverImage = document.createElement('img');
+                        songCoverImage.src = song.coverPath;
+                        songCoverDiv.appendChild(songCoverImage);
+                        songCell.appendChild(songCoverDiv);
+
+                        let songTitleDiv = document.createElement('div');
+                        songTitleDiv.textContent = song.title;
+                        songCell.appendChild(songTitleDiv);
+
+                        songTable.appendChild(songRow);
+                    });
+
 
                 }
             }

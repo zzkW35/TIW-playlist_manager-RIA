@@ -22,8 +22,8 @@
 <!--            <div class="playlist-title">No playlists available</div>-->
 <!--        </div>-->
         <a class="playlist-card">
-            <div class="playlist-title" id="playlist-title"></div>
-            <div class="playlist-date" id="playlist-date"></div>
+<!--            <div class="playlist-title" id="playlist-title"></div>-->
+<!--            <div class="playlist-date" id="playlist-date"></div>-->
         </a>
     </div>
     <div class="upload-song" id="upload-song">
@@ -61,15 +61,8 @@
     <div class="playlist-page" id="playlist-page">
         <h2><span id="playlist-name">Your playlist</span></h2>
         <div class="table-container">
-            <table>
-                <tr>
-                    <th th:each="song, stat : ${session.trimmedSongList}" th:if="${stat.count <= 5}">
-                        <img th:src="${song.coverPath}" alt="Album Cover">
-                        <a th:href="@{/GoToPlayerPage(songId=${song.id})}">
-                            <p th:text="${song.title}">Song Name</p>
-                        </a>
-                    </th>
-                </tr>
+            <table class="songTable">
+
             </table>
         </div>
     </div>
