@@ -1,6 +1,6 @@
 (function() {
     // Get the login form
-    let loginForm = document.getElementById('login-form')
+    let loginForm = document.querySelector('.login-form')
 
     // Attach event listener to the form's submit event
     loginForm.addEventListener('submit', function(event) {
@@ -8,7 +8,7 @@
         event.preventDefault();
 
         // Call the makeCall function
-        makeCall('POST', '/PlaylistManager_war/Login', loginForm, function(req) {
+        makeFormCall('POST', '/PlaylistManager_war/Login', loginForm, function(req) {
             if (req.readyState === XMLHttpRequest.DONE) {
                 // Handle the response here
                 let message = req.responseText;
