@@ -45,15 +45,17 @@
         /**
          * Method of the PageOrchestrator to refresh the view
          */
-        this.refresh = function (excludeContacts) {
+        this.refresh = function () {
             // Refreshes view
+            userData = new UserData(
+                sessionStorage.getItem('id'),
+                sessionStorage.getItem('userName'),
+                sessionStorage.getItem('playlists'),
+                sessionStorage.getItem('songs'),
+                [document.getElementById("userName")],
+                document.getElementById("playlists")
+            );
             userData.show();
-            // accountList.show();
-            //
-            // if (!excludeContacts) {
-            //
-            //     addressBook.load();
-            // }
         };
     }
 
@@ -76,10 +78,11 @@
                 element.textContent = this.userName;
             });
             this.showPlaylists();
-            // this.showSongs();
         }
 
         this.showPlaylists = function () {
+            this.playlistsElement.innerHTML = '';
+
             this.playlists.forEach(playlist => {
                 let playlistCard = document.createElement('div');
                 playlistCard.className = 'playlist-card';
@@ -93,6 +96,7 @@
                 playlistDate.className = 'playlist-date';
                 playlistDate.textContent = playlist.creationDate;
                 playlistCard.appendChild(playlistDate);
+
 
                 this.playlistsElement.appendChild(playlistCard);
             });
@@ -135,12 +139,10 @@
     function fillSongSelection() {
         // Get the songs from sessionStorage
         let songs = sessionStorage.getItem('songs');
-        if (songs) {
-            songs = JSON.parse(songs); // Convert the JSON string back to an object
-
-            // Get the multiselect element
-            let songSelect = document.querySelector('#songSelection');
-
+        // Get the multiselect element
+        let songSelect = document.querySelector('#songSelection');
+        songs = JSON.parse(songs);
+        if (songs.length>0) {
             // Clear the current options
             songSelect.innerHTML = '';
 
@@ -152,6 +154,9 @@
                 songSelect.appendChild(option);
             });
         } else {
+            let option = document.createElement('option');
+            option.textContent = "No songs available";
+            songSelect.appendChild(option);
             console.log('No songs found in sessionStorage');
         }
     }
@@ -181,6 +186,7 @@ function CreatePlaylist(createPlaylistForm) {
                     let responseData = JSON.parse(req.responseText);
                     console.log(responseData);
                     sessionStorage.setItem('playlists', JSON.stringify(responseData));
+                    pageOrchestrator.refresh();
                 }
             }
         });
