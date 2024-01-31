@@ -30,7 +30,7 @@
 
             // Upload song component
             uploadSong = new UploadSong(
-                document.getElementById("upload-song-form")
+                document.querySelector('.upload-song-form')
             );
         }
         /**
@@ -90,20 +90,22 @@
     function UploadSong(
         uploadSongForm
     ) {
-        this.uploadSongForm = uploadSongForm;
-
-        this.uploadSongForm.addEventListener('submit', function(event) {
+        uploadSongForm.addEventListener('submit', function(event) {
             // Prevent the default form submission
             event.preventDefault();
 
             // Call the makeCall function
-            window.makeCall('POST', '/PlaylistManager_war/UploadSong', uploadSongForm, function(req) {
+            makeFormCall('POST', '/PlaylistManager_war/UploadSong', uploadSongForm, function(req) {
+
                 if (req.readyState === XMLHttpRequest.DONE) {
                     // Handle the response here
                     let message = req.responseText;
                     if (req.status === 200) {
                         // Login was successful
                         console.log("Song uploaded");
+                        let responseData = JSON.parse(req.responseText);
+                        console.log(responseData);
+                        sessionStorage.setItem('userSongs', JSON.stringify(responseData));
                     } //else {
                     //     // Login failed
                     //     let errorMessage = document.querySelector('.error-message');

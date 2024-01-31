@@ -103,6 +103,7 @@ public class Login extends HttpServlet {
         }
 
         // Send user, their playlists and their songs to the client
+        session.setAttribute("currentUser", user);
         String userInfo = new Gson().toJson(new UserData(user, orderedUserPlaylists, userSongs));
         response.setStatus(HttpServletResponse.SC_OK);
         response.setContentType("application/json");

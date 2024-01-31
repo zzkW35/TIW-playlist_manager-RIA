@@ -1,10 +1,10 @@
 package it.polimi.tiw.playlistmanager.controllers;
 
+import com.google.gson.Gson;
 import it.polimi.tiw.playlistmanager.beans.Song;
 import it.polimi.tiw.playlistmanager.beans.User;
 import it.polimi.tiw.playlistmanager.dao.SongDAO;
 import it.polimi.tiw.playlistmanager.handlers.ConnectionHandler;
-import org.thymeleaf.TemplateEngine;
 
 import java.io.IOException;
 import java.io.Serial;
@@ -16,7 +16,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import static it.polimi.tiw.playlistmanager.handlers.ThymeleafHandler.*;
 
@@ -28,7 +27,6 @@ public class UploadSong extends HttpServlet {
 	@Serial
 	private static final long serialVersionUID = 1L;
 	private Connection connection = null;
-	private TemplateEngine templateEngine;
 
     /**
      * @see HttpServlet#HttpServlet()
@@ -40,7 +38,6 @@ public class UploadSong extends HttpServlet {
 	public void init() throws ServletException {
 		connection = ConnectionHandler.getConnection(getServletContext());
 		ServletContext servletContext = getServletContext();
-		this.templateEngine = handler(servletContext);
 	}
 
 	/**
@@ -68,12 +65,14 @@ public class UploadSong extends HttpServlet {
 			songFilePath = request.getParameter("songFilePath");
 		} catch (Exception e) {
 			String error = "Incorrect or missing parameters, details: " + e.getMessage();
-			forwardToErrorPage(request, response, error, getServletContext(), templateEngine);
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			response.getWriter().println(error);
 			return;
 		}
 		if (songAlbumYear < 0) {
 			String error = "Year must be positive";
-			forwardToErrorPage(request, response, error, getServletContext(), templateEngine);
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			response.getWriter().println(error);
 			return;
 		}
 		// Check parameters
@@ -81,7 +80,8 @@ public class UploadSong extends HttpServlet {
 				songAlbum == null || songAlbum.isEmpty() || songArtist == null || songArtist.isEmpty() ||
 				songGenre == null || songGenre.isEmpty() || songFilePath == null || songFilePath.isEmpty()) {
 			String error = "Incorrect or missing parameters";
-			forwardToErrorPage(request, response, error, getServletContext(), templateEngine);
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			response.getWriter().println(error);
 			return;
 		}
 
@@ -92,7 +92,8 @@ public class UploadSong extends HttpServlet {
 					songUploaderId);
 		} catch (Exception e) {
 			String error = "Could not upload the song, details: " + e.getMessage();
-			forwardToErrorPage(request, response, error, getServletContext(), templateEngine);
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			response.getWriter().println(error);
 			return;
 		}
 
@@ -102,12 +103,14 @@ public class UploadSong extends HttpServlet {
 			userSongs = songDAO.findAllSongsByUserId(songUploaderId);
 		} catch (Exception e) {
 			String error = "Could not retrieve songs, details: " + e.getMessage();
-			forwardToErrorPage(request, response, error, getServletContext(), templateEngine);
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			response.getWriter().println(error);
 			return;
 		}
-		HttpSession session = request.getSession();
-		session.setAttribute("userSongs", userSongs);
-		String homePath = "/WEB-INF/home.html";
-		forward(request, response, homePath, getServletContext(), templateEngine);
+		String userSongsJson = new Gson().toJson(userSongs);
+		response.setStatus(HttpServletResponse.SC_OK);
+		response.setContentType("application/json");
+		response.setCharacterEncoding("UTF-8");
+		response.getWriter().write(userSongsJson);
 	}
 }
