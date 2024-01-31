@@ -17,7 +17,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import static it.polimi.tiw.playlistmanager.handlers.ThymeleafHandler.*;
 
 /**
  * Servlet implementation class UploadSong
