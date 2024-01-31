@@ -36,3 +36,17 @@ function makeFormCall(method, url, formElement, callback, reset = true) {
         formElement.reset();
     }
 }
+
+function makeFormDataCall(method, url, formData, callback) {
+    let req = new XMLHttpRequest();
+    req.onreadystatechange = function() {
+        callback(req);
+    };
+    req.open(method, url, true);
+    if (formData instanceof FormData) {
+        req.send(formData);
+    } else {
+        req.send();
+    }
+}
+

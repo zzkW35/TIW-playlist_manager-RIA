@@ -8,7 +8,7 @@ public class UserData {
     private List<Playlist> playlists;
     private List<Song> songs;
 
-    // constructor, getters and setters
+    // Constructor and getters
     public UserData(User user, List<Playlist> playlists, List<Song> songs) {
         this.userId = user.getId();
         this.userName = user.getName();

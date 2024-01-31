@@ -17,6 +17,7 @@
 
         this.start = function () {
             // Init components
+            document.getElementById('playlist-page').style.display = 'none';
             // UserData component
             userData = new UserData(
                 sessionStorage.getItem('id'),
@@ -97,6 +98,22 @@
                 playlistDate.textContent = playlist.creationDate;
                 playlistCard.appendChild(playlistDate);
 
+                // Add event listener to the playlist card
+                playlistCard.addEventListener('click', function() {
+                    // Hide all other components
+                    document.querySelector('.playlists').style.display = 'none';
+                    document.querySelector('.upload-song').style.display = 'none';
+                    document.querySelector('.create-playlist').style.display = 'none';
+
+                    // Show the playlist info
+                    // Assuming you have a div with id 'playlist-info' to show the playlist info
+                    let playlistInfo = document.getElementById('playlist-page');
+                    playlistInfo.style.display = 'block';
+                    console.log(playlist.id)
+
+                    getPlaylistPage(playlist.id);
+
+                });
 
                 this.playlistsElement.appendChild(playlistCard);
             });
@@ -160,38 +177,57 @@
             console.log('No songs found in sessionStorage');
         }
     }
-function CreatePlaylist(createPlaylistForm) {
-    createPlaylistForm.addEventListener('submit', function(event) {
-        // Prevent the default form submission
-        event.preventDefault();
+    function CreatePlaylist(createPlaylistForm) {
+        createPlaylistForm.addEventListener('submit', function(event) {
+            // Prevent the default form submission
+            event.preventDefault();
 
-        // Get the playlist name and selected songs
-        let playlistTitle = document.getElementById('playlistTitle').value;
-        let songSelection = Array.from(document.getElementById('songSelection').selectedOptions).map(option => option.value);
+            // Get the playlist name and selected songs
+            let playlistTitle = document.getElementById('playlistTitle').value;
+            let songSelection = Array.from(document.getElementById('songSelection').selectedOptions).map(option => option.value);
 
-        // Create a FormData object and append the playlist name and selected songs
-        // let formData = new FormData();
-        createPlaylistForm.append('playlistTitle', playlistTitle);
-        createPlaylistForm.append('songSelection', JSON.stringify(songSelection));
+            // Create a FormData object and append the playlist name and selected songs
+            // let formData = new FormData();
+            createPlaylistForm.append('playlistTitle', playlistTitle);
+            createPlaylistForm.append('songSelection', JSON.stringify(songSelection));
 
-        // Call the makeCall function
-        makeFormCall('POST', '/PlaylistManager_war/CreateNewPlaylist', createPlaylistForm, function(req) {
+            // Call the makeCall function
+            makeFormCall('POST', '/PlaylistManager_war/CreateNewPlaylist', createPlaylistForm, function(req) {
 
+                if (req.readyState === XMLHttpRequest.DONE) {
+                    // Handle the response here
+                    let message = req.responseText;
+                    if (req.status === 200) {
+                        // Playlist creation was successful
+                        console.log("Playlist created");
+                        let responseData = JSON.parse(req.responseText);
+                        console.log(responseData);
+                        sessionStorage.setItem('playlists', JSON.stringify(responseData));
+                        pageOrchestrator.refresh();
+                    }
+                }
+            });
+        });
+    }
+
+    function getPlaylistPage(playlistId) {
+        makeFormCall('GET', '/PlaylistManager_war/GoToPlaylistPage?playlistId=' + playlistId, null, function(req) {
             if (req.readyState === XMLHttpRequest.DONE) {
                 // Handle the response here
                 let message = req.responseText;
                 if (req.status === 200) {
-                    // Playlist creation was successful
+                    // Login was successful
                     console.log("Playlist created");
                     let responseData = JSON.parse(req.responseText);
                     console.log(responseData);
-                    sessionStorage.setItem('playlists', JSON.stringify(responseData));
-                    pageOrchestrator.refresh();
+                    sessionStorage.setItem('songs', JSON.stringify(responseData.songs));
+
                 }
             }
         });
-    });
-}
+    }
+
+
 
 
 })();

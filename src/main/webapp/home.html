@@ -3,6 +3,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
     <link rel="stylesheet" type="text/css" href="css/styles.css">
+    <link rel="stylesheet" type="text/css" href="css/playlist.css">
     <link rel="stylesheet" type="text/css" href="css/home.css">
     <script src="js/utils.js" defer></script>
     <script src="js/home.js" defer></script>
@@ -25,7 +26,7 @@
             <div class="playlist-date" id="playlist-date"></div>
         </a>
     </div>
-    <div class="upload-song">
+    <div class="upload-song" id="upload-song">
         <h2>Upload a New Song:</h2>
         <form class="upload-song-form" id="upload-song-form">
             <label for="songTitle">Song Title:</label><br>
@@ -45,16 +46,35 @@
             <input type="submit" value="Upload Song">
         </form>
     </div>
-<div class="create-playlist">
-    <h2>Create a New Playlist:</h2>
-    <form class="create-playlist-form" id="create-playlist-form">
-        <label for="playlistTitle">Playlist Name:</label><br>
-        <input type="text" id="playlistTitle" name="playlistTitle" required><br>
-        <label for="songSelection">Select Songs:</label><br>
-        <select id="songSelection" name="songSelection" multiple required>
-        </select><br>
-        <input type="submit" value="Create Playlist">
-    </form>
-</div>
+    <div class="create-playlist" id="create-playlist">
+        <h2>Create a New Playlist:</h2>
+        <form class="create-playlist-form" id="create-playlist-form">
+            <label for="playlistTitle">Playlist Name:</label><br>
+            <input type="text" id="playlistTitle" name="playlistTitle" required><br>
+            <label for="songSelection">Select Songs:</label><br>
+            <select id="songSelection" name="songSelection" multiple required>
+            </select><br>
+            <input type="submit" value="Create Playlist">
+        </form>
+    </div>
+
+    <div class="playlist-page" id="playlist-page">
+        <h2><span id="playlist-name">Your playlist</span></h2>
+        <div class="table-container">
+            <table>
+                <tr>
+                    <th th:each="song, stat : ${session.trimmedSongList}" th:if="${stat.count <= 5}">
+                        <img th:src="${song.coverPath}" alt="Album Cover">
+                        <a th:href="@{/GoToPlayerPage(songId=${song.id})}">
+                            <p th:text="${song.title}">Song Name</p>
+                        </a>
+                    </th>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+
+
 </body>
 </html>

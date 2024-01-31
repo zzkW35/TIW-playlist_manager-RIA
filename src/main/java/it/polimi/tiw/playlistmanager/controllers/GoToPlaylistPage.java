@@ -4,24 +4,22 @@ import java.io.IOException;
 import java.io.Serial;
 import java.sql.Connection;
 import java.util.List;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
+import com.google.gson.Gson;
 import it.polimi.tiw.playlistmanager.beans.Playlist;
+import it.polimi.tiw.playlistmanager.beans.PlaylistData;
 import it.polimi.tiw.playlistmanager.beans.Song;
 import it.polimi.tiw.playlistmanager.beans.User;
 import it.polimi.tiw.playlistmanager.dao.BinderDAO;
 import it.polimi.tiw.playlistmanager.dao.PlaylistDAO;
-import org.thymeleaf.TemplateEngine;
 
 import it.polimi.tiw.playlistmanager.handlers.ConnectionHandler;
 
-import static it.polimi.tiw.playlistmanager.handlers.ThymeleafHandler.*;
 
 /**
  * Servlet implementation class GoToPlaylistPage
@@ -31,7 +29,6 @@ public class GoToPlaylistPage extends HttpServlet {
     @Serial
     private static final long serialVersionUID = 1L;
     private Connection connection;
-    private TemplateEngine templateEngine;
 
     /**
      * @see HttpServlet#HttpServlet()
@@ -42,8 +39,6 @@ public class GoToPlaylistPage extends HttpServlet {
 
     public void init() throws ServletException {
         connection = ConnectionHandler.getConnection(getServletContext());
-        ServletContext servletContext = getServletContext();
-        this.templateEngine = handler(servletContext);
     }
 
     /**
@@ -56,7 +51,8 @@ public class GoToPlaylistPage extends HttpServlet {
         User currentUser = (User) request.getSession().getAttribute("currentUser");
         if (playlistIdString == null || playlistIdString.isEmpty()) {
             String error = "Missing playlistId";
-            forwardToErrorPage(request, response, error, getServletContext(), templateEngine);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().println(error);
             return;
         }
 
@@ -66,7 +62,8 @@ public class GoToPlaylistPage extends HttpServlet {
             playlistId = Integer.parseInt(playlistIdString);
         } catch (NumberFormatException e) {
             String error = "PlaylistId is not an integer";
-            forwardToErrorPage(request, response, error, getServletContext(), templateEngine);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().println(error);
             return;
         }
 
@@ -77,7 +74,8 @@ public class GoToPlaylistPage extends HttpServlet {
             playlist = playlistDAO.findPlaylistById(playlistId);
         } catch (Exception e) {
             String error = "PlaylistId is not valid";
-            forwardToErrorPage(request, response, error, getServletContext(), templateEngine);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().println(error);
             return;
         }
 
@@ -88,7 +86,8 @@ public class GoToPlaylistPage extends HttpServlet {
             songs = binderDAO.findAllSongsByPlaylistId(playlistId);
         } catch (Exception e) {
             String error = "Something went wrong while retrieving the songs, details: " + e.getMessage();
-            forwardToErrorPage(request, response, error, getServletContext(), templateEngine);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().println(error);
             return;
         }
         // Order songs by their albumYear
@@ -100,13 +99,15 @@ public class GoToPlaylistPage extends HttpServlet {
             songsNotInPlaylist = binderDAO.findAllSongsOfUserNotInPlaylist(playlistId, currentUser.getId());
         } catch (Exception e) {
             String error = "Something went wrong while retrieving the songs, details: " + e.getMessage();
-            forwardToErrorPage(request, response, error, getServletContext(), templateEngine);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().println(error);
             return;
         }
 
         if (playlist == null) {
             String error = "Playlist not found";
-            forwardToErrorPage(request, response, error, getServletContext(), templateEngine);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().println(error);
             return;
         }
 
@@ -119,14 +120,20 @@ public class GoToPlaylistPage extends HttpServlet {
         request.getSession().setAttribute("currentPage", 1);
 
         // Add the playlist and the songs to the parameters and redirect to the playlist page
-        HttpSession session = request.getSession();
-        session.setAttribute("playlist", playlist);
-        session.setAttribute("playlistTitle", playlist.getTitle());
-        session.setAttribute("songs", songs); //Full list of songs
-        session.setAttribute("trimmedSongList", songs); //List of songs to be displayed
-        session.setAttribute("songIndex", songs.size());
-        session.setAttribute("songsNotInPlaylist", songsNotInPlaylist);
-        String playlistPath = "/WEB-INF/playlist.html";
-        forward(request, response, playlistPath, getServletContext(), templateEngine);
+//        HttpSession session = request.getSession();
+//        session.setAttribute("playlist", playlist);
+//        session.setAttribute("playlistTitle", playlist.getTitle());
+//        session.setAttribute("songs", songs); //Full list of songs
+//        session.setAttribute("trimmedSongList", songs); //List of songs to be displayed
+//        session.setAttribute("songIndex", songs.size());
+//        session.setAttribute("songsNotInPlaylist", songsNotInPlaylist);
+//        String playlistPath = "/WEB-INF/playlist.html";
+//        forward(request, response, playlistPath, getServletContext(), templateEngine);
+
+        String playlistInfo = new Gson().toJson(new PlaylistData(playlist, songs, songsNotInPlaylist));
+        response.setStatus(HttpServletResponse.SC_OK);
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write(playlistInfo);
     }
 }
