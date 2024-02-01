@@ -28,7 +28,6 @@ public class AddSongToPlaylist extends HttpServlet {
     @Serial
     private static final long serialVersionUID = 1L;
     private Connection connection = null;
-    private TemplateEngine templateEngine;
     private ConstructHandler constructHandler;
 
     /**
@@ -40,8 +39,6 @@ public class AddSongToPlaylist extends HttpServlet {
 
     public void init() throws ServletException {
         connection = ConnectionHandler.getConnection(getServletContext());
-        ServletContext servletContext = getServletContext();
-        this.templateEngine = handler(servletContext);
     }
 
     /**
@@ -56,7 +53,8 @@ public class AddSongToPlaylist extends HttpServlet {
             songIds = request.getParameterValues("songSelection");
         } catch (Exception e) {
             String error = "Incorrect or missing parameters, error is: " + e.getMessage();
-            forwardToErrorPage(request, response, error, getServletContext(), templateEngine);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().println(error);
             return;
         }
 
@@ -66,10 +64,17 @@ public class AddSongToPlaylist extends HttpServlet {
             ConstructHandler.songListPlaylistBinder(binderDAO, response, songIds, playlistID);
         } catch (Exception e) {
             String error = "Error in creating the binder, error is: " + e.getMessage();
-            forwardToErrorPage(request, response, error, getServletContext(), templateEngine);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().println(error);
             return;
         }
-        String playlistIdString = Integer.toString(playlistID);
-        response.sendRedirect(getServletContext().getContextPath() + "/GoToPlaylistPage?playlistId=" + playlistIdString);
+//        String playlistIdString = Integer.toString(playlistID);
+//        response.sendRedirect(getServletContext().getContextPath() + "/GoToPlaylistPage?playlistId=" + playlistIdString);
+
+        // Send the updated song list to the client
+
+
+
+
     }
 }

@@ -111,25 +111,7 @@ public class GoToPlaylistPage extends HttpServlet {
             return;
         }
 
-        // Set the parameters for the pagination
-        if (songs.size() > 5) {
-            request.getSession().setAttribute("hasNextPage", 1);
-        } else {
-            request.getSession().setAttribute("hasNextPage", 0);
-        }
-        request.getSession().setAttribute("currentPage", 1);
-
-        // Add the playlist and the songs to the parameters and redirect to the playlist page
-//        HttpSession session = request.getSession();
-//        session.setAttribute("playlist", playlist);
-//        session.setAttribute("playlistTitle", playlist.getTitle());
-//        session.setAttribute("songs", songs); //Full list of songs
-//        session.setAttribute("trimmedSongList", songs); //List of songs to be displayed
-//        session.setAttribute("songIndex", songs.size());
-//        session.setAttribute("songsNotInPlaylist", songsNotInPlaylist);
-//        String playlistPath = "/WEB-INF/playlist.html";
-//        forward(request, response, playlistPath, getServletContext(), templateEngine);
-
+        // Send the playlist to the client
         String playlistInfo = new Gson().toJson(new PlaylistData(playlist, songs, songsNotInPlaylist));
         response.setStatus(HttpServletResponse.SC_OK);
         response.setContentType("application/json");

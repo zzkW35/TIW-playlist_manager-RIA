@@ -10,6 +10,7 @@ import it.polimi.tiw.playlistmanager.handlers.ConstructHandler;
 
 import java.io.IOException;
 import java.io.Serial;
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
@@ -19,6 +20,8 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 
 /**
@@ -46,6 +49,8 @@ public class CreateNewPlaylist extends HttpServlet {
      * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
      */
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        Gson gson = new Gson();
         String playlistTitle;
         String[] songIds;
         User songUploader = (User) request.getSession().getAttribute("currentUser");
@@ -54,7 +59,9 @@ public class CreateNewPlaylist extends HttpServlet {
 
         try {
             playlistTitle = request.getParameter("playlistTitle");
-            songIds = request.getParameterValues("songSelection");
+            String songSelectionEncoded = request.getParameterValues("songSelection")[0];
+            String songSelectionDecoded = java.net.URLDecoder.decode(songSelectionEncoded, UTF_8);
+            songIds = gson.fromJson(songSelectionDecoded, String[].class);
             if (playlistTitle == null || playlistTitle.isEmpty() || songIds == null || songIds.length == 0) {
                 throw new Exception("Missing or incorrect parameters");
             }
@@ -67,18 +74,9 @@ public class CreateNewPlaylist extends HttpServlet {
 
         // Insert the playlist into the database
         PlaylistDAO playlistDAO = new PlaylistDAO(connection);
-        try {
-            playlistId = playlistDAO.createPlaylist(playlistTitle, songUploaderId);
-        } catch (Exception e) {
-            String error = "Could not create playlist: " + e.getMessage();
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            response.getWriter().println(error);
-            return;
-        }
-
-        // Create the binder between the playlist and the songs
         BinderDAO binderDAO = new BinderDAO(connection);
         try {
+            playlistId = playlistDAO.createPlaylist(playlistTitle, songUploaderId);
             ConstructHandler.songListPlaylistBinder(binderDAO, response, songIds, playlistId);
         } catch (Exception e) {
             String error = "Could not create playlist: " + e.getMessage();

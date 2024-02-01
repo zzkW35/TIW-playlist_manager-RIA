@@ -1,8 +1,8 @@
 (function() {
     //Vars
-    var userData, uploadSong, createPlaylist;
+    let userData, uploadSong, createPlaylist;
 
-    var pageOrchestrator = new PageOrchestrator();
+    let pageOrchestrator = new PageOrchestrator();
 
     window.addEventListener("load", () => {
         // initialize the components
@@ -41,7 +41,7 @@
             );
 
             // Fill the song selection multiselect with songs
-            fillSongSelection();
+            fillSongSelection('songs', '#songSelection');
         }
         /**
          * Method of the PageOrchestrator to refresh the view
@@ -141,7 +141,6 @@
                         console.log(responseData);
                         sessionStorage.setItem('userSongs', JSON.stringify(responseData));
                         document.querySelector('.upload-song').style.display = 'none';
-
                     } //else {
                     //     // Login failed
                     //     let errorMessage = document.querySelector('.error-message');
@@ -154,11 +153,11 @@
         });
     }
 
-    function fillSongSelection() {
+    function fillSongSelection(songsToGet, multiselectElement) {
         // Get the songs from sessionStorage
-        let songs = sessionStorage.getItem('songs');
+        let songs = sessionStorage.getItem(songsToGet);
         // Get the multiselect element
-        let songSelect = document.querySelector('#songSelection');
+        let songSelect = document.querySelector(multiselectElement);
         songs = JSON.parse(songs);
         if (songs.length>0) {
             // Clear the current options
@@ -185,16 +184,14 @@
 
             // Get the playlist name and selected songs
             let playlistTitle = document.getElementById('playlistTitle').value;
-            let songSelection = Array.from(document.getElementById('songSelection').selectedOptions).map(option => option.value);
+            let songSelection = Array.from(document.getElementById('songSelection').selectedOptions)
+                .map(option => option.value);
 
-            // Create a FormData object and append the playlist name and selected songs
-            // let formData = new FormData();
-            createPlaylistForm.append('playlistTitle', playlistTitle);
-            createPlaylistForm.append('songSelection', JSON.stringify(songSelection));
+            let encodedSongSelection = encodeURIComponent(JSON.stringify(songSelection));
+            let url = '/PlaylistManager_war/CreateNewPlaylist?playlistTitle=' + playlistTitle +
+                "&songSelection=" + encodedSongSelection;
 
-            // Call the makeCall function
-            makeFormCall('POST', '/PlaylistManager_war/CreateNewPlaylist', createPlaylistForm, function(req) {
-
+            makeFormCall('POST', url, null, function(req) {
                 if (req.readyState === XMLHttpRequest.DONE) {
                     // Handle the response here
                     let message = req.responseText;
@@ -212,7 +209,8 @@
     }
 
     function getPlaylistPage(playlistId) {
-        makeFormCall('GET', '/PlaylistManager_war/GoToPlaylistPage?playlistId=' + playlistId, null, function(req) {
+        let url = '/PlaylistManager_war/GoToPlaylistPage?playlistId=' + playlistId;
+        makeFormCall('GET', url,  null, function(req) {
             if (req.readyState === XMLHttpRequest.DONE) {
                 // Handle the response here
                 let message = req.responseText;
@@ -287,6 +285,11 @@
                     });
 
                     updateTable();
+
+
+
+
+
                 }
             }
         });
