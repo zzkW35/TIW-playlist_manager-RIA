@@ -10,6 +10,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.gson.Gson;
+import it.polimi.tiw.playlistmanager.dao.BinderDAO;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
@@ -17,6 +19,7 @@ import it.polimi.tiw.playlistmanager.handlers.ConnectionHandler;
 
 import static it.polimi.tiw.playlistmanager.handlers.ThymeleafHandler.forward;
 import static it.polimi.tiw.playlistmanager.handlers.ThymeleafHandler.handler;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * Servlet implementation class SortSongs
@@ -25,7 +28,7 @@ import static it.polimi.tiw.playlistmanager.handlers.ThymeleafHandler.handler;
 public class SortSongs extends HttpServlet {
     @Serial
     private static final long serialVersionUID = 1L;
-    private TemplateEngine templateEngine;
+    private Connection connection = null;
 
 
     /**
@@ -37,18 +40,45 @@ public class SortSongs extends HttpServlet {
 
     public void init() throws ServletException {
         ServletContext servletContext = getServletContext();
-        this.templateEngine = handler(servletContext);
+        connection = ConnectionHandler.getConnection(getServletContext());
+
     }
 
     /**
      * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
      */
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // Clean all the session attributes
-        request.getSession().invalidate();
+        String[] songIds;
+        int playlistId;
+        Gson gson = new Gson();
 
-        // Redirect to the login page
-        String loginPage = "/WEB-INF/login.html";
-        forward(request, response, loginPage, getServletContext(), templateEngine);
+        try {
+            String songSelectionEncoded = request.getParameterValues("newOrder")[0];
+            String songSelectionDecoded = java.net.URLDecoder.decode(songSelectionEncoded, UTF_8);
+            songIds = gson.fromJson(songSelectionDecoded, String[].class);
+            playlistId = Integer.parseInt(request.getParameter("playlistId"));
+        } catch (Exception e) {
+            String error = "Incorrect or missing parameters, error is: " + e.getMessage();
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().println(error);
+            return;
+        }
+
+        BinderDAO binderDAO = new BinderDAO(connection);
+        try {
+            binderDAO.reorderSongs(playlistId, songIds);
+        } catch (Exception e) {
+            String error = "Could not sort songs, error is: " + e.getMessage();
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().println(error);
+            return;
+        }
+        // Send the updated song list to the client
+        response.setStatus(HttpServletResponse.SC_OK);
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
+
+
     }
 }

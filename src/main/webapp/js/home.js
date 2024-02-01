@@ -143,7 +143,7 @@
                         let responseData = JSON.parse(req.responseText);
                         console.log(responseData);
                         sessionStorage.setItem('userSongs', JSON.stringify(responseData));
-                        document.querySelector('.upload-song').style.display = 'none';
+                        // document.querySelector('.upload-song').style.display = 'none';
                     } //else {
                     //     // Login failed
                     //     let errorMessage = document.querySelector('.error-message');
@@ -226,8 +226,8 @@
                     console.log(responseData);
                     let songsRes = responseData.songs;
                     console.log("unsorted songs:" + JSON.stringify(songsRes))
-                    // songsRes.sort((a, b) => b.position - a.position);
-                    // console.log("sorted songs:" + JSON.stringify(songsRes))
+                    songsRes.sort((a, b) => a.position - b.position);
+                    console.log("sorted songs:" + JSON.stringify(songsRes))
 
                     sessionStorage.setItem('songs', JSON.stringify(songsRes));
                     sessionStorage.setItem('songsNotInPlaylist', JSON.stringify(responseData.songsNotInPlaylist));
@@ -271,6 +271,8 @@
                                 document.querySelector('.create-playlist').style.display = 'none';
                                 document.querySelector('.playlist-page').style.display = 'none';
                                 document.querySelector('.update-playlist').style.display = 'none';
+                                document.getElementById('reorder-button').style.display = 'none';
+
 
                                 // Show the song info
                                 let songInfo = document.getElementById('player');
@@ -289,8 +291,6 @@
                                 audioElement.load();
                             });
                         }
-
-
                         songTable.appendChild(songRow);
 
                         // Hide or show the "Previous" button
@@ -376,12 +376,32 @@
                             e.target.parentNode.insertBefore(document.getElementById(id), e.target.nextSibling);
                         });
 
-
                         document.getElementById('save-order-button').addEventListener('click', function() {
                             let listItems = document.querySelectorAll('#song-list li');
                             let newOrder = Array.from(listItems).map(item => item.id);
-                            sessionStorage.setItem('songs', JSON.stringify(newOrder));
+                            // let newOrder = Array.from(listItems).map((item, index) => {
+                            //     return {[item.id]: index};
+                            // });
                             console.log(JSON.stringify(newOrder));
+                            sessionStorage.setItem('songs', JSON.stringify(newOrder));
+                            let encodedNewOrder = encodeURIComponent(JSON.stringify(newOrder));
+                            let playlistId = sessionStorage.getItem('playlistId');
+                            let url = '/PlaylistManager_war/SortSongs?playlistId=' + playlistId +
+                                "&newOrder=" + encodedNewOrder;
+                            makeFormCall('POST', url, null, function(req) {
+                                if (req.readyState === XMLHttpRequest.DONE) {
+                                    // Handle the response here
+                                    let message = req.responseText;
+                                    if (req.status === 200) {
+                                        // Playlist creation was successful
+                                        console.log("Songs reordered successfully");
+                                        // let responseData = JSON.parse(req.responseText);
+                                        // console.log(responseData);
+                                        // sessionStorage.setItem('songs', JSON.stringify(responseData));
+                                        // getPlaylistPage(playlistId);
+                                    }
+                                }
+                            });
                         });
 
                     });
