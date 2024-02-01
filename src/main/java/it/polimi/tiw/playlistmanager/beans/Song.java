@@ -10,6 +10,7 @@ public class Song {
     private String genre;
     private String filePath; // Path to the song file
     private int uploaderId;
+    private int position = 0;
 
     public int getId() {
         return id;
@@ -81,6 +82,14 @@ public class Song {
 
     public void setUploaderId(int uploaderId) {
         this.uploaderId = uploaderId;
+    }
+
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
     }
 
 }

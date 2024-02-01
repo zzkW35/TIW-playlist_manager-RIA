@@ -159,7 +159,8 @@ private Connection connection;
      * @throws SQLException if something goes wrong while searching for the songs
      */
     public List<Song> findAllSongsByPlaylistId(int playlistId) throws SQLException {
-        String query = "SELECT * FROM song INNER JOIN binder ON song.id = binder.song_id WHERE binder.playlist_id = ?";
+//        String query = "SELECT * FROM song INNER JOIN binder ON song.id = binder.song_id WHERE binder.playlist_id = ?";
+        String query = "SELECT song.*, binder.song_position FROM song INNER JOIN binder ON song.id = binder.song_id WHERE binder.playlist_id = ?";
         List<Song> songs;
         ResultSet resultSet = null;
         PreparedStatement preparedStatement = null;
@@ -181,6 +182,7 @@ private Connection connection;
                 song.setGenre(resultSet.getString("genre"));
                 song.setFilePath(resultSet.getString("file_path"));
                 song.setUploaderId(resultSet.getInt("uploader_id"));
+                song.setPosition(resultSet.getInt("song_position"));
                 songs.add(song);
             }
         }
@@ -342,5 +344,7 @@ private Connection connection;
             }
         }
     }
+
+    // Get the son_position
 
 }

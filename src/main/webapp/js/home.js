@@ -20,6 +20,9 @@
             document.getElementById('playlist-page').style.display = 'none';
             document.getElementById('update-playlist').style.display = 'none';
             document.getElementById('player').style.display = 'none';
+            document.getElementById('reorder-button').style.display = 'none';
+            document.getElementById('save-order-button').style.display = 'none';
+
 
             // UserData component
             userData = new UserData(
@@ -177,6 +180,7 @@
             console.log('No songs found in sessionStorage');
         }
     }
+
     function CreatePlaylist(createPlaylistForm) {
         createPlaylistForm.addEventListener('submit', function(event) {
             // Prevent the default form submission
@@ -221,6 +225,10 @@
                     let responseData = JSON.parse(req.responseText);
                     console.log(responseData);
                     let songsRes = responseData.songs;
+                    console.log("unsorted songs:" + JSON.stringify(songsRes))
+                    // songsRes.sort((a, b) => b.position - a.position);
+                    // console.log("sorted songs:" + JSON.stringify(songsRes))
+
                     sessionStorage.setItem('songs', JSON.stringify(songsRes));
                     sessionStorage.setItem('songsNotInPlaylist', JSON.stringify(responseData.songsNotInPlaylist));
                     console.log("Songs not in playlist: " + responseData.songsNotInPlaylist);
@@ -324,7 +332,59 @@
                     );
 
                     fillSongSelection('songsNotInPlaylist', '#update-songSelection');
+                    document.getElementById('reorder-button').style.display = 'block';
 
+                    document.getElementById('reorder-button').addEventListener('click', function() {
+                        // Hide everything on the screen
+                        document.querySelector('.home-title').style.display = 'none';
+                        document.querySelector('.playlists').style.display = 'none';
+                        document.querySelector('.upload-song').style.display = 'none';
+                        document.querySelector('.create-playlist').style.display = 'none';
+                        document.querySelector('.playlist-page').style.display = 'none';
+                        document.querySelector('.update-playlist').style.display = 'none';
+                        document.getElementById('reorder-button').style.display = 'none';
+
+                        // Display the song list
+                        document.getElementById('song-list').style.display = 'block';
+                        document.getElementById('save-order-button').style.display = 'block';
+
+                        // Populate the song list
+                        let songs = JSON.parse(sessionStorage.getItem('songs'));
+                        let songList = document.getElementById('song-list');
+                        songs.forEach(song => {
+                            let listItem = document.createElement('li');
+                            listItem.textContent = song.title;
+                            listItem.id = song.id; // Use the song id as the list item id
+                            listItem.draggable = true;
+                            songList.appendChild(listItem);
+                        });
+
+                        let listItems = document.querySelectorAll('#song-list li');
+                        listItems.forEach(item => {
+                            item.addEventListener('dragstart', function(e) {
+                                e.dataTransfer.setData('text/plain', e.target.id);
+                            });
+                        });
+
+                        document.getElementById('song-list').addEventListener('dragover', function(e) {
+                            e.preventDefault(); // Allow dropping
+                        });
+
+                        document.getElementById('song-list').addEventListener('drop', function(e) {
+                            e.preventDefault(); // Prevent the default action (open as link)
+                            let id = e.dataTransfer.getData('text/plain');
+                            e.target.parentNode.insertBefore(document.getElementById(id), e.target.nextSibling);
+                        });
+
+
+                        document.getElementById('save-order-button').addEventListener('click', function() {
+                            let listItems = document.querySelectorAll('#song-list li');
+                            let newOrder = Array.from(listItems).map(item => item.id);
+                            sessionStorage.setItem('songs', JSON.stringify(newOrder));
+                            console.log(JSON.stringify(newOrder));
+                        });
+
+                    });
 
                 }
             }
