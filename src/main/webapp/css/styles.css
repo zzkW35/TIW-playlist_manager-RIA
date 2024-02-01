@@ -50,3 +50,11 @@ input[type="submit"]:hover {
     right: 10px;
     border: 2px solid white;
 }
+
+button {
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+}

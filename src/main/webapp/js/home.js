@@ -101,6 +101,7 @@
                 // Add event listener to the playlist card
                 playlistCard.addEventListener('click', function() {
                     // Hide all other components
+                    document.querySelector('.home-title').style.display = 'none';
                     document.querySelector('.playlists').style.display = 'none';
                     document.querySelector('.upload-song').style.display = 'none';
                     document.querySelector('.create-playlist').style.display = 'none';
@@ -222,7 +223,8 @@
                     console.log(responseData);
                     let songsRes = responseData.songs;
                     sessionStorage.setItem('songs', JSON.stringify(songsRes));
-                    document.getElementById('playlist-name').textContent = songsRes.playlistTitle;
+                    console.log(songsRes.playlistTitle);
+                    document.getElementById('playlist-name').textContent = responseData.playlistTitle;
 
                     let songTable = document.querySelector('.songTable');
                     let prevButton = document.querySelector('#prevButton');
@@ -252,6 +254,20 @@
                         }
 
                         songTable.appendChild(songRow);
+
+                        // Hide or show the "Previous" button
+                        if (startIndex > 0) {
+                            prevButton.style.display = '';
+                        } else {
+                            prevButton.style.display = 'none';
+                        }
+
+                        // Hide or show the "Next" button
+                        if (endIndex < songsRes.length) {
+                            nextButton.style.display = '';
+                        } else {
+                            nextButton.style.display = 'none';
+                        }
                     }
 
                     prevButton.addEventListener('click', function () {
