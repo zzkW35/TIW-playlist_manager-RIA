@@ -22,10 +22,10 @@ import it.polimi.tiw.playlistmanager.handlers.ConnectionHandler;
 
 
 /**
- * Servlet implementation class GoToPlaylistPage
+ * Servlet implementation class GetPlaylist
  */
-@WebServlet("/GoToPlaylistPage")
-public class GoToPlaylistPage extends HttpServlet {
+@WebServlet("/GetPlaylist")
+public class GetPlaylist extends HttpServlet {
     @Serial
     private static final long serialVersionUID = 1L;
     private Connection connection;
@@ -33,7 +33,7 @@ public class GoToPlaylistPage extends HttpServlet {
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public GoToPlaylistPage() {
+    public GetPlaylist() {
         super();
     }
 

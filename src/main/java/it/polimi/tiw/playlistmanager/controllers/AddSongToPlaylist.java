@@ -7,22 +7,17 @@ import it.polimi.tiw.playlistmanager.beans.User;
 import it.polimi.tiw.playlistmanager.dao.BinderDAO;
 import it.polimi.tiw.playlistmanager.handlers.ConnectionHandler;
 import it.polimi.tiw.playlistmanager.handlers.ConstructHandler;
-import org.thymeleaf.TemplateEngine;
 
 import java.io.IOException;
 import java.io.Serial;
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.List;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import static it.polimi.tiw.playlistmanager.handlers.ThymeleafHandler.handler;
-import static it.polimi.tiw.playlistmanager.handlers.ThymeleafHandler.forwardToErrorPage;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**

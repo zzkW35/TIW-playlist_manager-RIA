@@ -14,10 +14,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import it.polimi.tiw.playlistmanager.beans.User;
-import org.thymeleaf.TemplateEngine;
-
-
-import static it.polimi.tiw.playlistmanager.handlers.ThymeleafHandler.*;
 
 /**
  * Servlet Filter implementation class LoggedUser
@@ -25,7 +21,6 @@ import static it.polimi.tiw.playlistmanager.handlers.ThymeleafHandler.*;
 @WebFilter("/LoggedUser")
 public class LoggedUser implements Filter {
 
-    private TemplateEngine templateEngine;
 
     /**
      * Default constructor.
@@ -38,7 +33,6 @@ public class LoggedUser implements Filter {
      */
     public void init(FilterConfig filterConfig) throws ServletException {
         ServletContext servletContext = filterConfig.getServletContext();
-        this.templateEngine = handler(servletContext);
     }
 
     /**
@@ -61,7 +55,6 @@ public class LoggedUser implements Filter {
         }
 
         String error = "You are not allowed to access this page";
-        forwardToErrorPage(req, res, error, req.getServletContext(), templateEngine);
     }
 
 }

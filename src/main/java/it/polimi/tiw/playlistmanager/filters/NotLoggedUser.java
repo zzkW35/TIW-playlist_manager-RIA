@@ -1,7 +1,6 @@
 package it.polimi.tiw.playlistmanager.filters;
 
 import it.polimi.tiw.playlistmanager.beans.User;
-import org.thymeleaf.TemplateEngine;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
@@ -10,7 +9,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
-import static it.polimi.tiw.playlistmanager.handlers.ThymeleafHandler.*;
 
 /**
  * Servlet Filter implementation class NotLoggedUser
@@ -18,7 +16,6 @@ import static it.polimi.tiw.playlistmanager.handlers.ThymeleafHandler.*;
 @WebFilter("/NotLoggedUser")
 public class NotLoggedUser implements Filter {
 
-    private TemplateEngine templateEngine;
 
     /**
      * Default constructor.
@@ -31,7 +28,6 @@ public class NotLoggedUser implements Filter {
      */
     public void init(FilterConfig filterConfig) throws ServletException {
         ServletContext servletContext = filterConfig.getServletContext();
-        this.templateEngine = handler(servletContext);
     }
 
     /**
@@ -48,7 +44,7 @@ public class NotLoggedUser implements Filter {
             User user = (User) session.getAttribute("currentUser");
 
             if (user != null) {
-                forward(req, res, "/WEB-INF/home.html", req.getServletContext(), templateEngine);
+//                forward(req, res, "/WEB-INF/home.html", req.getServletContext(), templateEngine);
                 return;
             }
         }

@@ -12,13 +12,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.gson.Gson;
 import it.polimi.tiw.playlistmanager.dao.BinderDAO;
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.WebContext;
 
 import it.polimi.tiw.playlistmanager.handlers.ConnectionHandler;
 
-import static it.polimi.tiw.playlistmanager.handlers.ThymeleafHandler.forward;
-import static it.polimi.tiw.playlistmanager.handlers.ThymeleafHandler.handler;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**

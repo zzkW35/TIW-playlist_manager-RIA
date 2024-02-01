@@ -213,7 +213,7 @@
     }
 
     function getPlaylistPage(playlistId) {
-        let url = '/PlaylistManager_war/GoToPlaylistPage?playlistId=' + playlistId;
+        let url = '/PlaylistManager_war/GetPlaylist?playlistId=' + playlistId;
         makeFormCall('GET', url,  null, function(req) {
             let updatePlaylist;
             if (req.readyState === XMLHttpRequest.DONE) {
