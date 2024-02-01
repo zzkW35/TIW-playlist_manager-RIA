@@ -6,6 +6,7 @@
     <link rel="stylesheet" type="text/css" href="css/playlist.css">
     <link rel="stylesheet" type="text/css" href="css/player.css">
     <link rel="stylesheet" type="text/css" href="css/home.css">
+    <link rel="stylesheet" type="text/css" href="css/error.css">
     <script src="js/utils.js" defer></script>
     <script src="js/home.js" defer></script>
     <title>Home page</title>
@@ -91,6 +92,11 @@
         <audio id="player-audio" controls>
             Your browser does not support the audio element.
         </audio>
+    </div>
+
+    <div class="error" id="error">
+        <h2>An error occurred, we're sorry.</h2>
+        <p class="error-info" id="error-info">Error information</p>
     </div>
 </body>
 </html>

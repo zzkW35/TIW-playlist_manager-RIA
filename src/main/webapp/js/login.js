@@ -1,6 +1,7 @@
 (function() {
     // Get the login form
     let loginForm = document.querySelector('.login-form')
+    document.getElementById('error').style.display = 'none';
 
     // Attach event listener to the form's submit event
     loginForm.addEventListener('submit', function(event) {
@@ -20,12 +21,12 @@
                     sessionStorage.setItem('playlists', JSON.stringify(responseData.playlists));
                     sessionStorage.setItem('songs', JSON.stringify(responseData.songs));
                     window.location.href = 'home.html';
-                } //else {
-                //     // Login failed
-                //     let errorMessage = document.querySelector('.error-message');
-                //     errorMessage.textContent = message;
-                //     errorMessage.classList.remove('hidden');
-                // }
+                }
+                else {
+                    console.log("message: " + message);
+                    document.getElementById('error').style.display = 'block';
+                    document.getElementById('error-info').textContent = message;
+                }
 
             }
         });

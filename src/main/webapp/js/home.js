@@ -22,7 +22,7 @@
             document.getElementById('player').style.display = 'none';
             document.getElementById('reorder-button').style.display = 'none';
             document.getElementById('reorder-group').style.display = 'none';
-
+            document.getElementById('error').style.display = 'none';
 
             // UserData component
             userData = new UserData(
@@ -144,13 +144,8 @@
                         console.log(responseData);
                         sessionStorage.setItem('userSongs', JSON.stringify(responseData));
                         // document.querySelector('.upload-song').style.display = 'none';
-                    } //else {
-                    //     // Login failed
-                    //     let errorMessage = document.querySelector('.error-message');
-                    //     errorMessage.textContent = message;
-                    //     errorMessage.classList.remove('hidden');
-                    // }
-
+                    }
+                    else {showError(message);}
                 }
             });
         });
@@ -161,10 +156,10 @@
         let songs = sessionStorage.getItem(songsToGet);
         // Get the multiselect element
         let songSelect = document.querySelector(multiselectElement);
+        songSelect.innerHTML = '';
         songs = JSON.parse(songs);
         if (songs.length>0) {
             // Clear the current options
-            songSelect.innerHTML = '';
 
             // Create an option element for each song and append it to the multiselect
             songs.forEach(song => {
@@ -207,6 +202,8 @@
                         sessionStorage.setItem('playlists', JSON.stringify(responseData));
                         pageOrchestrator.refresh();
                     }
+                    else {showError(message);}
+
                 }
             });
         });
@@ -228,6 +225,7 @@
                     console.log("unsorted songs:" + JSON.stringify(songsRes))
                     songsRes.sort((a, b) => a.position - b.position);
                     console.log("sorted songs:" + JSON.stringify(songsRes))
+
 
                     sessionStorage.setItem('songs', JSON.stringify(songsRes));
                     sessionStorage.setItem('songsNotInPlaylist', JSON.stringify(responseData.songsNotInPlaylist));
@@ -259,7 +257,7 @@
 
                             let songTitleDiv = document.createElement('div');
                             songTitleDiv.textContent = song.title;
-                            songTitleDiv.className = 'song-title'; // Add a class to the song title div
+                            songTitleDiv.className = 'song-title';
                             songCell.appendChild(songTitleDiv);
 
                             // Add event listener to the song title div
@@ -272,7 +270,6 @@
                                 document.querySelector('.playlist-page').style.display = 'none';
                                 document.querySelector('.update-playlist').style.display = 'none';
                                 document.getElementById('reorder-button').style.display = 'none';
-
 
                                 // Show the song info
                                 let songInfo = document.getElementById('player');
@@ -350,6 +347,7 @@
                         // Populate the song list
                         let songs = JSON.parse(sessionStorage.getItem('songs'));
                         let songList = document.getElementById('song-list');
+                        songList.innerHTML = '';
                         songs.forEach(song => {
                             let listItem = document.createElement('li');
                             listItem.textContent = song.title;
@@ -378,9 +376,6 @@
                         document.getElementById('save-order-button').addEventListener('click', function() {
                             let listItems = document.querySelectorAll('#song-list li');
                             let newOrder = Array.from(listItems).map(item => item.id);
-                            // let newOrder = Array.from(listItems).map((item, index) => {
-                            //     return {[item.id]: index};
-                            // });
                             console.log(JSON.stringify(newOrder));
                             sessionStorage.setItem('songs', JSON.stringify(newOrder));
                             let encodedNewOrder = encodeURIComponent(JSON.stringify(newOrder));
@@ -394,18 +389,15 @@
                                     if (req.status === 200) {
                                         // Playlist creation was successful
                                         console.log("Songs reordered successfully");
-                                        // let responseData = JSON.parse(req.responseText);
-                                        // console.log(responseData);
-                                        // sessionStorage.setItem('songs', JSON.stringify(responseData));
-                                        // getPlaylistPage(playlistId);
                                     }
+                                    else {showError(message);}
                                 }
                             });
                         });
 
                     });
-
                 }
+                else {showError(message);}
             }
         });
     }
@@ -432,17 +424,23 @@
                     if (req.status === 200) {
                         // Playlist creation was successful
                         console.log("Song added successfully");
-                        // let responseData = JSON.parse(req.responseText);
-                        // console.log(responseData);
-                        // sessionStorage.setItem('playlists', JSON.stringify(responseData));
-                        // getPlaylistPage(playlistId);
+                        getPlaylistPage(playlistId);
                     }
+                    else {showError(message);}
                 }
             });
         });
     }
-
-
-
-
+    function showError(message){
+        document.getElementById('playlists').style.display = 'none';
+        document.getElementById('upload-song').style.display = 'none';
+        document.getElementById('create-playlist').style.display = 'none';
+        document.getElementById('playlist-page').style.display = 'none';
+        document.getElementById('update-playlist').style.display = 'none';
+        document.getElementById('player').style.display = 'none';
+        document.getElementById('reorder-button').style.display = 'none';
+        document.getElementById('reorder-group').style.display = 'none';
+        document.getElementById('error').style.display = 'block';
+        document.getElementById('error-info').textContent = message;
+    }
 })();
