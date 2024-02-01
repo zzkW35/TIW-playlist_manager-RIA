@@ -211,6 +211,7 @@
     function getPlaylistPage(playlistId) {
         let url = '/PlaylistManager_war/GoToPlaylistPage?playlistId=' + playlistId;
         makeFormCall('GET', url,  null, function(req) {
+            let updatePlaylist;
             if (req.readyState === XMLHttpRequest.DONE) {
                 // Handle the response here
                 let message = req.responseText;
@@ -221,7 +222,9 @@
                     console.log(responseData);
                     let songsRes = responseData.songs;
                     sessionStorage.setItem('songs', JSON.stringify(songsRes));
-                    console.log(songsRes.playlistTitle);
+                    sessionStorage.setItem('songsNotInPlaylist', JSON.stringify(responseData.songsNotInPlaylist));
+                    console.log("Songs not in playlist: " + responseData.songsNotInPlaylist);
+                    sessionStorage.setItem('playlistId', responseData.playlistId);
                     document.getElementById('playlist-name').textContent = responseData.playlistTitle;
 
                     let songTable = document.querySelector('.songTable');
@@ -286,12 +289,48 @@
 
                     updateTable();
 
+                    // Create new update playlist component
+                    updatePlaylist = new UpdatePlaylist(
+                        document.querySelector('.update-playlist-form')
+                    );
 
-
+                    fillSongSelection('songsNotInPlaylist', '#update-songSelection');
 
 
                 }
             }
+        });
+    }
+
+    function UpdatePlaylist(updatePlaylistForm){
+        // updatePlaylistForm.innerHTML = '';
+        updatePlaylistForm.addEventListener('submit', function(event) {
+            // Prevent the default form submission
+            event.preventDefault();
+
+            // Get the playlist name and selected songs
+            let playlistId = sessionStorage.getItem('playlistId');
+            let songSelection = Array.from(document.getElementById('update-songSelection').selectedOptions)
+                .map(option => option.value);
+
+            let encodedSongSelection = encodeURIComponent(JSON.stringify(songSelection));
+            let url = '/PlaylistManager_war/AddSongToPlaylist?playlistId=' + playlistId +
+                "&songSelection=" + encodedSongSelection;
+
+            makeFormCall('POST', url, null, function(req) {
+                if (req.readyState === XMLHttpRequest.DONE) {
+                    // Handle the response here
+                    let message = req.responseText;
+                    if (req.status === 200) {
+                        // Playlist creation was successful
+                        console.log("Song added successfully");
+                        // let responseData = JSON.parse(req.responseText);
+                        // console.log(responseData);
+                        // sessionStorage.setItem('playlists', JSON.stringify(responseData));
+                        // getPlaylistPage(playlistId);
+                    }
+                }
+            });
         });
     }
 
