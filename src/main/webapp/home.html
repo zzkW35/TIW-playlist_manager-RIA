@@ -70,13 +70,16 @@
             </select><br>
             <input type="submit" value="Add to Playlist">
         </form>
+        <button class="reorder-button" id="reorder-button">Reorder Songs</button>
     </div>
 
-    <button id="reorder-button">Reorder Songs</button>
-    <ul id="song-list">
-    <!-- List items will be added here dynamically -->
-    </ul>
-    <button id="save-order-button">Save Order</button>
+    <div class="reorder-group" id="reorder-group">
+        <h2>Drag and drop to reorder your playlist:</h2>
+        <ul id="song-list">
+        <!-- List items will be added here dynamically -->
+        </ul>
+        <button id="save-order-button">Save Order</button>
+    </div>
 
     <div class="player" id="player">
         <h2 class="song-title" id="song-title">Song Title</h2>

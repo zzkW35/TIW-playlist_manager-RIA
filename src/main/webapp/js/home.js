@@ -21,7 +21,7 @@
             document.getElementById('update-playlist').style.display = 'none';
             document.getElementById('player').style.display = 'none';
             document.getElementById('reorder-button').style.display = 'none';
-            document.getElementById('save-order-button').style.display = 'none';
+            document.getElementById('reorder-group').style.display = 'none';
 
 
             // UserData component
@@ -344,9 +344,8 @@
                         document.querySelector('.update-playlist').style.display = 'none';
                         document.getElementById('reorder-button').style.display = 'none';
 
-                        // Display the song list
-                        document.getElementById('song-list').style.display = 'block';
-                        document.getElementById('save-order-button').style.display = 'block';
+                        // Display the reorder group
+                        document.getElementById('reorder-group').style.display = 'block';
 
                         // Populate the song list
                         let songs = JSON.parse(sessionStorage.getItem('songs'));

@@ -20,6 +20,27 @@
     width: 80%;
     padding: 20px;
     background-color: white;
-    box-shadow: 0 0 10px 0px rgba(0,0,0,0.1);
+    box-shadow: 0 0 10px 0 rgba(0,0,0,0.1);
     margin: 0 auto 20px;
+}
+
+.update-playlist {
+    width: 80%;
+    padding: 20px;
+    background-color: white;
+    box-shadow: 0 0 10px 0 rgba(0,0,0,0.1);
+    margin: 0 auto 20px;
+}
+
+.reorder-button {
+    margin-top: 20px;
+}
+
+.reorder-group {
+
+    width: 80%;
+    padding: 20px;
+    background-color: white;
+    box-shadow: 0 0 10px 0 rgba(0,0,0,0.1);
+    margin: 60px auto 20px;
 }
