@@ -225,12 +225,18 @@
                     document.getElementById('playlist-name').textContent = songsRes.playlistTitle;
 
                     let songTable = document.querySelector('.songTable');
+                    let prevButton = document.querySelector('#prevButton');
+                    let nextButton = document.querySelector('#nextButton');
 
-                    let songRow = document.createElement('tr');
-                    let count = 0;
+                    let startIndex = 0;
+                    let endIndex = 5;
 
-                    songsRes.forEach(song => {
-                        if (count < 5) {
+                    function updateTable() {
+                        songTable.innerHTML = '';
+                        let songRow = document.createElement('tr');
+
+                        for (let i = startIndex; i < endIndex && i < songsRes.length; i++) {
+                            let song = songsRes[i];
                             let songCell = document.createElement('td');
                             songRow.appendChild(songCell);
 
@@ -243,14 +249,28 @@
                             let songTitleDiv = document.createElement('div');
                             songTitleDiv.textContent = song.title;
                             songCell.appendChild(songTitleDiv);
+                        }
 
-                            count++;
+                        songTable.appendChild(songRow);
+                    }
+
+                    prevButton.addEventListener('click', function () {
+                        if (startIndex > 0) {
+                            startIndex -= 5;
+                            endIndex -= 5;
+                            updateTable();
                         }
                     });
 
-                    songTable.appendChild(songRow);
+                    nextButton.addEventListener('click', function () {
+                        if (endIndex < songsRes.length) {
+                            startIndex += 5;
+                            endIndex += 5;
+                            updateTable();
+                        }
+                    });
 
-
+                    updateTable();
                 }
             }
         });
