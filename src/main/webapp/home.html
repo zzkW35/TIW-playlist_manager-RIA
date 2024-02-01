@@ -4,26 +4,19 @@
     <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
     <link rel="stylesheet" type="text/css" href="css/styles.css">
     <link rel="stylesheet" type="text/css" href="css/playlist.css">
+    <link rel="stylesheet" type="text/css" href="css/player.css">
     <link rel="stylesheet" type="text/css" href="css/home.css">
     <script src="js/utils.js" defer></script>
     <script src="js/home.js" defer></script>
     <title>Home page</title>
 </head>
 <body>
-<!--    <form method="get" th:action="@{/GoToLoginPage}" class="logout-button">-->
-<!--        <input type="submit" value="Logout">-->
-<!--    </form>-->
     <div class="home-title">Welcome back, <span id="userName">current user!</span>
     </div>
 
     <div class="playlists" id="playlists">
         <h2>Your Playlists:</h2>
-<!--        <div th:if="${#lists.isEmpty(session.orderedUserPlaylists)}" class="playlist-card">-->
-<!--            <div class="playlist-title">No playlists available</div>-->
-<!--        </div>-->
         <a class="playlist-card">
-<!--            <div class="playlist-title" id="playlist-title"></div>-->
-<!--            <div class="playlist-date" id="playlist-date"></div>-->
         </a>
     </div>
     <div class="upload-song" id="upload-song">
@@ -79,7 +72,16 @@
         </form>
     </div>
 
-
-
+    <div class="player" id="player">
+        <h2 class="song-title" id="song-title">Song Title</h2>
+        <p class="song-artist" id="song-artist">Artist Name</p>
+        <p class="song-album" id="song-album">Album Name</p>
+        <p class="song-genre" id="song-genre">Genre</p>
+        <p class="song-year" id="song-year">Year</p>
+        <img class="player-img" id="player-img" src="" alt="Album Cover">
+        <audio id="player-audio" controls>
+            Your browser does not support the audio element.
+        </audio>
+    </div>
 </body>
 </html>

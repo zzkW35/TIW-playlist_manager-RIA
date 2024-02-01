@@ -18,6 +18,9 @@
         this.start = function () {
             // Init components
             document.getElementById('playlist-page').style.display = 'none';
+            document.getElementById('update-playlist').style.display = 'none';
+            document.getElementById('player').style.display = 'none';
+
             // UserData component
             userData = new UserData(
                 sessionStorage.getItem('id'),
@@ -107,13 +110,10 @@
                     document.querySelector('.create-playlist').style.display = 'none';
 
                     // Show the playlist info
-                    // Assuming you have a div with id 'playlist-info' to show the playlist info
                     let playlistInfo = document.getElementById('playlist-page');
                     playlistInfo.style.display = 'block';
-                    console.log(playlist.id)
-
+                    console.log(playlist.id);
                     getPlaylistPage(playlist.id);
-
                 });
 
                 this.playlistsElement.appendChild(playlistCard);
@@ -251,8 +251,37 @@
 
                             let songTitleDiv = document.createElement('div');
                             songTitleDiv.textContent = song.title;
+                            songTitleDiv.className = 'song-title'; // Add a class to the song title div
                             songCell.appendChild(songTitleDiv);
+
+                            // Add event listener to the song title div
+                            songTitleDiv.addEventListener('click', function() {
+                                // Hide all other components
+                                document.querySelector('.home-title').style.display = 'none';
+                                document.querySelector('.playlists').style.display = 'none';
+                                document.querySelector('.upload-song').style.display = 'none';
+                                document.querySelector('.create-playlist').style.display = 'none';
+                                document.querySelector('.playlist-page').style.display = 'none';
+                                document.querySelector('.update-playlist').style.display = 'none';
+
+                                // Show the song info
+                                let songInfo = document.getElementById('player');
+                                songInfo.style.display = 'block';
+                                console.log(song)
+
+                                // Populate the song info div with the song details
+                                document.getElementById('song-title').textContent = song.title;
+                                document.getElementById('song-artist').textContent = song.artist;
+                                document.getElementById('song-album').textContent = song.album;
+                                document.getElementById('song-genre').textContent = song.genre;
+                                document.getElementById('song-year').textContent = song.albumYear;
+                                document.getElementById('player-img').src = song.coverPath;
+                                let audioElement = document.getElementById('player-audio');
+                                audioElement.src = song.filePath;
+                                audioElement.load();
+                            });
                         }
+
 
                         songTable.appendChild(songRow);
 
@@ -288,7 +317,7 @@
                     });
 
                     updateTable();
-
+                    document.getElementById('update-playlist').style.display = 'block';
                     // Create new update playlist component
                     updatePlaylist = new UpdatePlaylist(
                         document.querySelector('.update-playlist-form')

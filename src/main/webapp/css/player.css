@@ -1,14 +1,13 @@
-div {
-    width: 80%;
-    margin: auto;
-    text-align: center;
-}
+/*div {*/
+/*    width: 80%;*/
+/*    margin: auto;*/
+/*}*/
 
-p {
-    font-size: 1.2em;
-}
+/*p {*/
+/*    font-size: 1.2em;*/
+/*}*/
 
-img {
+.player-img {
     width: 300px;
     height: 300px;
     object-fit: cover;
@@ -19,6 +18,7 @@ audio {
 }
 
 .player {
+    text-align: center;
     width: 80%;
     margin: 80px auto 20px;
     padding: 20px;
